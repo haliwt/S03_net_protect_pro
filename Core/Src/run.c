@@ -419,6 +419,18 @@ void RunCommand_MainBoard_Fun(void)
 	      
 
 	 }
+
+	 if(run_t.gTimer_ptc_adc_times > 1 ){ //3 minutes 120s
+         run_t.gTimer_ptc_adc_times=0;
+		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
+	     Judge_PTC_Temperature_Value();
+
+	 }
+
+	 if(run_t.gTimer_fan_adc_times > 92){ //2 minute 180s
+	     run_t.gTimer_fan_adc_times =0;
+	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,30);
+	 }
 	 break;
 
 	 case 1:
@@ -489,17 +501,7 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.gFan_counter=0;
     }
 
-	if(run_t.gTimer_ptc_adc_times > 1 ){ //3 minutes 120s
-         run_t.gTimer_ptc_adc_times=0;
-		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
-	     Judge_PTC_Temperature_Value();
-
-	 }
-
-	 if(run_t.gTimer_fan_adc_times > 92){ //2 minute 180s
-	     run_t.gTimer_fan_adc_times =0;
-	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,30);
-	 }
+	
 
 	
     break;

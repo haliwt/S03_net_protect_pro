@@ -41,14 +41,14 @@ void Fan_One_Power_Off_Speed(void)
 void Fan_One_Speed(void)
 {
 
-	SetLevel_Fan_PWMA(20);
+	SetLevel_Fan_PWMA(23);
 
 
 }
 
 void Fan_Two_Speed(void)
 {
-	SetLevel_Fan_PWMA(22);
+	SetLevel_Fan_PWMA(24);
 	//FAN_CW_SetLow(); //brake
 	//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6,GPIO_PIN_SET);
 }

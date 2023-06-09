@@ -163,6 +163,7 @@ typedef struct _RUN_T{
 	  uint8_t gTimer_auto_detected_net_link_state;
 	  uint8_t gTimer_fan_adc_times;
 	  uint8_t gTimer_ptc_adc_times;
+
 	  
 
 

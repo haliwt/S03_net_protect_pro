@@ -176,6 +176,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	   wifi_t.gTimer_subscriber_send ++;
 	   run_t.gTimer_continuce_works_time++;
 	   run_t.gTimer_fan_adc_times++;
+	 
 	   if(tm1>59){
 	   	  tm1=0;
 		 run_t.gTimer_ptc_adc_times++;

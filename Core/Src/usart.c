@@ -253,5 +253,15 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+#if 0
+void EUSART_RxDataHandler(void){
+    // use this default receive interrupt handler code
+    eusartRxBuffer[eusartRxHead++] = RC1REG;
+    if(sizeof(eusartRxBuffer) <= eusartRxHead)
+    {
+        eusartRxHead = 0;
+    }
+    eusartRxCount++;
+}
+#endif 
 /* USER CODE END 1 */

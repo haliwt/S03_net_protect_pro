@@ -29,6 +29,7 @@
 #include "publish.h"
 #include "delay.h"
 #include "publish.h"
+#include "subscription.h"
 
 
 
@@ -272,9 +273,13 @@ void Judge_PTC_Temperature_Value(void)
 			HAL_Delay(100);
 			Buzzer_KeySound();	
 			HAL_Delay(100);
+			SendWifiCmd_To_Order(WIFI_PTC_OFF);
+            HAL_Delay(5);
+		  
 			
    	}
     else{
+	  run_t.ptc_too_hot_warning =0;
 	  Publish_Data_Warning(ptc_temp_warning,0);
 
 	  HAL_Delay(200);
@@ -323,6 +328,8 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 			       HAL_Delay(100);
 				   Buzzer_KeySound();
 			       HAL_Delay(100);
+				   SendWifiData_To_PanelWindSpeed(0x0);
+			       HAL_Delay(10);
 
 			   	}
 	           detect_error_times++;

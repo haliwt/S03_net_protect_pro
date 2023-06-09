@@ -151,14 +151,15 @@ void ActionEvent_Handler(void)
 if(run_t.works_break_power_on==0) { 
 
     
-	if(run_t.gDry == 1){
+	if(run_t.gDry == 1 && run_t.ptc_too_hot_warning ==0){
 
 	   PTC_SetHigh();
 
 	}
 	else{
 		   PTC_SetLow();
-	
+		  
+		   
 	}
 	//kill
 	if(run_t.gPlasma == 1){
