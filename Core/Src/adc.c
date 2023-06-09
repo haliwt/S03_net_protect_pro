@@ -262,16 +262,25 @@ void Judge_PTC_Temperature_Value(void)
            //Publish_Reference_Update_State();
             Publish_Data_Warning(ptc_temp_warning,0x01);
 		    Buzzer_KeySound();
-		   HAL_Delay(100);
+		   	HAL_Delay(100);
 			HAL_Delay(100);
 			Buzzer_KeySound();
 			HAL_Delay(100);
 			 Buzzer_KeySound();
             HAL_Delay(100);
             Buzzer_KeySound();
-				
+			HAL_Delay(100);
+			Buzzer_KeySound();	
+			HAL_Delay(100);
 			
    	}
+    else{
+	  Publish_Data_Warning(ptc_temp_warning,0);
+
+	  HAL_Delay(200);
+
+
+	}
 }
 
 /*****************************************************************
