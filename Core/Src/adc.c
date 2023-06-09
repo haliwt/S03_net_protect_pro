@@ -24,7 +24,7 @@
 #include "buzzer.h"
 #include "run.h"
 #include "fan.h"
-
+#include "mqtt_iot.h"
 #include "cmd_link.h"
 #include "publish.h"
 #include "delay.h"
@@ -310,8 +310,11 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 
 	if(fan_detect_voltage >800 &&  fan_detect_voltage < 1400){
            detect_error_times=0;
+		    run_t.set_wind_speed_value=100;
 		   Publish_Data_Warning(fan_warning,0x0);
 		   HAL_Delay(200);
+		   MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+		   HAL_Delay(350);
     }
 	else{
 
@@ -332,6 +335,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 			       HAL_Delay(100);
 				   SendWifiData_To_PanelWindSpeed(0x0);
 			       HAL_Delay(10);
+				  
 				   MqttData_Publis_SetFan(0);
 			       HAL_Delay(350);
 				  
