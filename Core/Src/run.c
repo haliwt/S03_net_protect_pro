@@ -641,6 +641,7 @@ void RunCommand_Connect_Handler(void)
          run_t.RunCommand_Label= POWER_ON;
 		  run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
+		 run_t.ptc_too_hot_warning =0;
 		 Update_DHT11_Value();
 		 HAL_Delay(10);
 		 if(esp8266data.esp8266_login_cloud_success==1){
