@@ -606,7 +606,7 @@ void Json_Parse_Command_Fun(void)
 
 	  case PTC_ON_ITEM:
 	  if(run_t.gPower_flag ==POWER_ON){
-	 
+	    if(run_t.ptc_too_hot_warning ==0){
          MqttData_Publish_SetPtc(0x01);
 	  	 HAL_Delay(350);
 	     run_t.gDry=1;
@@ -615,6 +615,11 @@ void Json_Parse_Command_Fun(void)
 		 HAL_Delay(5);
 		 buzzer_temp_on=0;
           run_t.response_wifi_signal_label=0xff;
+	     }
+		 else{
+
+			run_t.response_wifi_signal_label=PTC_OFF_ITEM;
+		 }
 	  	}
 	
 	   break;
@@ -737,6 +742,8 @@ void Json_Parse_Command_Fun(void)
 	  case FAN_ITEM:
 	    if(run_t.gPower_flag ==POWER_ON){
 
+		     if(run_t.fan_warning ==0){
+
            		 wind_hundred =UART2_DATA.UART_Data[7]-0x30;
 	       		 wind_decade=UART2_DATA.UART_Data[8]-0x30;
                  wind_unit = UART2_DATA.UART_Data[9]-0x30;
@@ -751,7 +758,15 @@ void Json_Parse_Command_Fun(void)
     		SendWifiData_To_PanelWindSpeed(run_t.set_wind_speed_value);
 			HAL_Delay(10);
           
-			
+		    }
+			else{
+				run_t.set_wind_speed_value=0;
+
+			    MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+				HAL_Delay(350);
+
+
+			}
             
 		}
 	  	buzzer_temp_on=0;

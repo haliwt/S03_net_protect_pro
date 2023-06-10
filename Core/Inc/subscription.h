@@ -15,7 +15,11 @@ typedef enum DISPLAY_STATE_T{
     WIFI_SONIC_ON = 0x01,       //ultrasonic
     WIFI_SONIC_OFF = 0x11,
     WIFI_WIND_SPEED = 0x90,
-    WIFI_TEMPERATURE = 0xA0
+    WIFI_TEMPERATURE = 0xA0,
+
+	PTC_ERROR = 0xE0,
+	FAN_ERROR = 0xE1,
+    FAN_REMOVE_ERROR= 0xF1
 
 
 }display_state_t;

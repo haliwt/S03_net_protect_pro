@@ -253,13 +253,13 @@ void Judge_PTC_Temperature_Value(void)
   //if(run_t.ptc_temp_voltage < 54 || run_t.ptc_temp_voltage ==54){ //75 degree
    
   //if(run_t.ptc_temp_voltage < 60 || run_t.ptc_temp_voltage ==60){ //70 degree
-  if(run_t.ptc_too_hot_warning ==1){
+  if(run_t.ptc_too_hot_warning ==0){
   if(run_t.ptc_temp_voltage < 373 || run_t.ptc_temp_voltage ==373){ //90 degree
 	run_t.gDry =0 ;
 	PTC_SetLow(); //turn off
 	run_t.ptc_too_hot_warning =1;
 	          
-	//Publish_Reference_Update_State();
+	
 	Publish_Data_Warning(ptc_temp_warning,0x01);
 	Buzzer_KeySound();
 	HAL_Delay(200);
@@ -271,7 +271,7 @@ void Judge_PTC_Temperature_Value(void)
 	HAL_Delay(100);
 	Buzzer_KeySound();	
 	HAL_Delay(100);
-	SendWifiCmd_To_Order(WIFI_PTC_OFF);
+	SendWifiCmd_To_Order(PTC_ERROR); //0xE0
 	HAL_Delay(5);
 	MqttData_Publish_SetPtc(0);
 	HAL_Delay(350);
@@ -282,8 +282,9 @@ void Judge_PTC_Temperature_Value(void)
     else{
 	  run_t.ptc_too_hot_warning =0;
 	  Publish_Data_Warning(ptc_temp_warning,0);
-
 	  HAL_Delay(200);
+	  MqttData_Publish_SetPtc(1);
+	  HAL_Delay(350);
 
 
 	}
@@ -315,6 +316,9 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 		   HAL_Delay(200);
 		   MqttData_Publis_SetFan(run_t.set_wind_speed_value);
 		   HAL_Delay(350);
+		   SendWifiCmd_To_Order(FAN_REMOVE_ERROR); //0xE1,
+		   run_t.fan_warning = 0;
+		   run_t.fan_warning_send_data =0;
     }
 	else{
 
@@ -322,7 +326,8 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 			   if(detect_error_times >0){
 			   	detect_error_times=0;
 				 
-				   //Publish_Reference_Update_State();
+				   run_t.fan_warning = 1;
+			       run_t.fan_warning_send_data =1;
 				   Publish_Data_Warning(fan_warning,0x01);
 			       HAL_Delay(200);
 			       Buzzer_KeySound();
@@ -333,8 +338,8 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 			       HAL_Delay(100);
 				   Buzzer_KeySound();
 			       HAL_Delay(100);
-				   SendWifiData_To_PanelWindSpeed(0x0);
-			       HAL_Delay(10);
+				//   SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
+			    //   HAL_Delay(10);
 				  
 				   MqttData_Publis_SetFan(0);
 			       HAL_Delay(350);

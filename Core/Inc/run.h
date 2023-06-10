@@ -155,6 +155,7 @@ typedef struct _RUN_T{
       uint8_t wifi_config_net_lable;
 	  //ADC
 	  uint8_t ptc_too_hot_warning;
+	  uint8_t ptc_remove_warning_send_data;
 
 
 	  uint8_t gTimer_app_power_on;
@@ -163,7 +164,9 @@ typedef struct _RUN_T{
 	  uint8_t gTimer_auto_detected_net_link_state;
 	  uint8_t gTimer_fan_adc_times;
 	  uint8_t gTimer_ptc_adc_times;
-
+      uint8_t fan_warning;
+	  uint8_t fan_warning_send_data ;
+	  
 	  
 
 

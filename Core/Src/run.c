@@ -350,7 +350,7 @@ void SystemReset(void)
 void RunCommand_MainBoard_Fun(void)
 {
    uint8_t i;
-   static uint8_t fan_continuce;
+   static uint8_t fan_continuce,tm;
     
     if(run_t.buzzer_sound_flag == 1 ){
 	 	run_t.buzzer_sound_flag = 0;
@@ -416,13 +416,13 @@ void RunCommand_MainBoard_Fun(void)
 	  if(run_t.gTimer_senddata_panel >50 ){ //300ms
 	   	    run_t.gTimer_senddata_panel=0;
 	        ActionEvent_Handler();
-	      
+	    }
 
-	 }
-
-	 if(run_t.gTimer_ptc_adc_times > 1 ){ //3 minutes 120s
+	 if(run_t.gTimer_ptc_adc_times > 2  ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
+		 
 		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
+	     run_t.ptc_temp_voltage=200;
 	     Judge_PTC_Temperature_Value();
 
 	 }
@@ -430,7 +430,24 @@ void RunCommand_MainBoard_Fun(void)
 	 if(run_t.gTimer_fan_adc_times > 92){ //2 minute 180s
 	     run_t.gTimer_fan_adc_times =0;
 	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,30);
+	     
+
+		 
 	 }
+
+	 if(run_t.fan_warning_send_data  ==1){
+	 	run_t.fan_warning_send_data  =0;
+	    SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
+
+
+	 }
+     if( run_t.ptc_remove_warning_send_data ==0){
+	 	run_t.ptc_remove_warning_send_data++;
+	  	Publish_Data_Warning(ptc_temp_warning,0);
+	  	HAL_Delay(100);
+		Publish_Data_Warning(fan_warning,0);
+		HAL_Delay(100);
+     }
 	 break;
 
 	 case 1:
@@ -593,7 +610,7 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 		InitWifiModule_Hardware();//InitWifiModule();
 		HAL_Delay(1000);
         SmartPhone_TryToLink_TencentCloud();
- 
+         run_t.gTimer_ptc_adc_times=0;
 		if(esp8266data.esp8266_login_cloud_success==1){
 			wifi_t.runCommand_order_lable = wifi_publish_update_tencent_cloud_data;
 			esp8266data.gTimer_subscription_timing=0;
@@ -601,7 +618,7 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
             HAL_Delay(50);
 			
 		}
-   
+       run_t.gTimer_ptc_adc_times=0;
     }
     
     
@@ -642,6 +659,8 @@ void RunCommand_Connect_Handler(void)
 		  run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
 		 run_t.ptc_too_hot_warning =0;
+		 run_t.fan_warning =0;
+		 run_t.ptc_remove_warning_send_data =0;
 		 Update_DHT11_Value();
 		 HAL_Delay(10);
 		 if(esp8266data.esp8266_login_cloud_success==1){
