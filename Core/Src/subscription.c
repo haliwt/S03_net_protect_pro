@@ -591,6 +591,10 @@ void Json_Parse_Command_Fun(void)
               
 			   MqttData_Publish_SetOpen(1);  
 			   HAL_Delay(300);
+			    
+				 run_t.ptc_too_hot_warning =0;
+				 run_t.fan_warning =0;
+				 run_t.ptc_remove_warning_send_data =0;
 	           run_t.rx_command_tag= RUN_COMMAND;
 			   run_t.RunCommand_Label=POWER_ON;
 			   SendWifiCmd_To_Order(WIFI_POWER_ON);
