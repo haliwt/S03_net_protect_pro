@@ -278,7 +278,7 @@ void RunWifi_Command_Handler(void)
 		     wifi_t.get_rx_beijing_time_enable=1; //enable beijing times
 		     UART2_DATA.UART_Cnt=0;
              Get_BeiJing_Time_Cmd();
-			 HAL_Delay(400); //200
+			 HAL_Delay(1000); //200
 			 run_t.gTimer_read_beijing_time=0;
 	   	 	}
 
