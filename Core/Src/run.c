@@ -398,8 +398,8 @@ void RunCommand_MainBoard_Fun(void)
         }
        
         
-	    //MqttData_Publish_PowerOff_Ref(); 
-	    //HAL_Delay(100);
+	    MqttData_Publish_PowerOff_Ref(); 
+	    HAL_Delay(200);
 		SetPowerOff_ForDoing();
          run_t.gFan_counter=0;
 	    run_t.RunCommand_Label = FAN_CONTINUCE_RUN_ONE_MINUTE;
@@ -677,8 +677,7 @@ void RunCommand_Connect_Handler(void)
 				HAL_Delay(200);
 			 MqttData_Publish_Update_Data();//MqttData_Publish_SetOpen(1);  //MqttData_Publish_SetOpen(0x01);
 	         HAL_Delay(200);
-	       //  Publish_Data_ToTencent_Initial_Data();
-			// HAL_Delay(200);
+	      
 		 }
 
 		 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;

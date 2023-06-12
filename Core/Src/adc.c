@@ -302,7 +302,7 @@ void Judge_PTC_Temperature_Value(void)
 *****************************************************************/
 void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 {
-	uint16_t adc_fan_hex;
+   uint16_t adc_fan_hex;
    Fan_Full_Speed();
    adc_fan_hex = Get_Adc_Average(channel,times);
 
@@ -311,10 +311,11 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 
 	if(fan_detect_voltage >800 &&  fan_detect_voltage < 1400){
            detect_error_times=0;
-		    run_t.set_wind_speed_value=100;
+		  
 		   Publish_Data_Warning(fan_warning,0x0);
 		   HAL_Delay(200);
-		   MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+		   // run_t.set_wind_speed_value=100;
+		  // MqttData_Publis_SetFan(run_t.set_wind_speed_value);
 		   HAL_Delay(350);
 		   SendWifiCmd_To_Order(FAN_REMOVE_ERROR); //0xE1,
 		   run_t.fan_warning = 0;
