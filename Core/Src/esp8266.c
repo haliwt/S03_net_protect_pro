@@ -291,6 +291,7 @@ void SmartPhone_TryToLink_TencentCloud(void)
 	//Decode_Function();
 	HAL_Delay(1000);
     HAL_Delay(1000);
+	HAL_Delay(1000);
 	//Decode_Function();
     //HAL_Delay(1000);
    // Decode_Function();
