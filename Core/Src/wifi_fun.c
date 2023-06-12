@@ -141,8 +141,7 @@ void RunWifi_Command_Handler(void)
 		         Publish_Data_ToTencent_Initial_Data();
 				 HAL_Delay(200);
 
-				Subscriber_Data_FromCloud_Handler();
-				HAL_Delay(300);
+				
 				wifi_t.runCommand_order_lable= wifi_tencent_subscription_data;
 	           
 	   	    }
@@ -157,43 +156,30 @@ void RunWifi_Command_Handler(void)
 			if(esp8266data.gTimer_subscription_timing>3  ){
 				
 				 SendWifiData_To_Cmd(0x01) ;	//WT.EDIT 2023.03.02
-				 HAL_Delay(500);
+				 HAL_Delay(3);
 				esp8266data.gTimer_subscription_timing=0;
 			 	esp8266data.gTimer_publish_timing=0;
 			 	Subscriber_Data_FromCloud_Handler();
 				HAL_Delay(350);
-			 	//wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
 				wifi_t.gTimer_get_beijing_time=0;
 				 run_t.gTimer_ptc_adc_times=0;
 				 run_t.gTimer_fan_adc_times=0;
+
+				
+				 run_t.gTimer_auto_detected_net_link_state=0;
+				 run_t.gTimer_publish_dht11=0;
+				 run_t.beijing_time_flag=0;
 				 wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
 					
 			}
 			
-//			if(esp8266data.gTimer_subscription_timing>59){
-//                 esp8266data.gTimer_subscription_timing=0;
-//	            Subscriber_Data_FromCloud_Handler();
-//			    HAL_Delay(350);
-//			
-//				wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
-//
-//            }
-
-		//if(esp8266data.gTimer_publish_dht11 >12)wifi_t.runCommand_order_lable= wifi_tencent_publish_dht11_data;
+		
+		
 
 		break;
 
 	   	case wifi_publish_update_tencent_cloud_data://05
             
-//             if(wifi_t.gTimer_subscriber_send > 94 || sub_send_power_on_times==0){
-//				 wifi_t.gTimer_subscriber_send=0;
-//                 sub_send_power_on_times++;
-//				 Subscriber_Data_FromCloud_Handler();
-//			     HAL_Delay(350);
-//				  
-//
-//			}
-//	   	      	
 
 		      while(run_t.beijing_time_flag == 1 && run_t.gPower_flag ==POWER_ON){
 				run_t.beijing_time_flag ++;

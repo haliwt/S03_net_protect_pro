@@ -118,8 +118,8 @@ int main(void)
     __HAL_UART_ENABLE_IT(&huart1,UART_IT_ERR);
     __HAL_UART_ENABLE_IT(&huart2,UART_IT_ERR);
 	run_t.power_off_fan_state=1;
-    run_t.rx_command_tag= RUN_COMMAND;
-   run_t.RunCommand_Label = POWER_OFF;
+    run_t.rx_command_tag= POWER_OFF;
+   //run_t.RunCommand_Label = POWER_OFF;
    //run_t.set_wind_speed_value=100;
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -135,7 +135,7 @@ int main(void)
 	  RunCommand_Connect_Handler();
 	}
     RunWifi_Command_Handler();
-    if(wifi_t.get_rx_beijing_time_enable==0 ){
+    if(wifi_t.get_rx_beijing_time_enable==0){
 	     Tencent_Cloud_Rx_Handler();
 		 Json_Parse_Command_Fun();
 	}

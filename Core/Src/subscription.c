@@ -397,6 +397,7 @@ void Wifi_Rx_InputInfo_Handler(void)
 
                if(strstr((const char*)esp8266data.data,"+TCSAP:WIFI_CONNECT_SUCCESS")){
               		esp8266data.soft_ap_config_success=1;
+              		esp8266data.linking_tencent_cloud_doing =0;
 					wifi_t.soft_ap_config_flag=0;
                	}
 
@@ -431,11 +432,12 @@ void Tencent_Cloud_Rx_Handler(void)
     if( esp8266data.rx_data_success==1){
             esp8266data.rx_data_success=0;
         
-	      run_t.set_beijing_time_flag =0;
+	     // run_t.set_beijing_time_flag =0; //WT.EDIT 2023.06.12
 		  wifi_t.get_rx_beijing_time_enable=0; //enable beijing times
 	
      if(wifi_t.received_data_from_tencent_cloud ==0x25){
 	    wifi_t.received_data_from_tencent_cloud=0;
+		run_t.set_beijing_time_flag =0; //WT.EDIT 2023.06.12
 		run_t.response_wifi_signal_label = APP_TIMER_POWER_ON_REF;
 	    __HAL_UART_CLEAR_OREFLAG(&huart2);
 		strcpy((char*)TCMQTTRCVPUB,(char *)UART2_DATA.UART_Data);
@@ -573,8 +575,8 @@ void Json_Parse_Command_Fun(void)
 		 	MqttData_Publish_SetOpen(0);  
 			HAL_Delay(350);
 
-			run_t.rx_command_tag= RUN_COMMAND;
-	        run_t.RunCommand_Label=POWER_OFF;
+			run_t.rx_command_tag= POWER_OFF;//RUN_COMMAND;
+	       // run_t.RunCommand_Label=POWER_OFF;
             SendWifiCmd_To_Order(WIFI_POWER_OFF);
 			HAL_Delay(5);
 			buzzer_temp_on=0;
@@ -588,23 +590,18 @@ void Json_Parse_Command_Fun(void)
 
 	  case OPEN_ON_ITEM:
       
-              
-			   MqttData_Publish_SetOpen(1);  
-			   HAL_Delay(300);
-			    
-				 run_t.ptc_too_hot_warning =0;
-				 run_t.fan_warning =0;
-				 run_t.ptc_remove_warning_send_data =0;
-	           run_t.rx_command_tag= RUN_COMMAND;
-			   run_t.RunCommand_Label=POWER_ON;
-			   SendWifiCmd_To_Order(WIFI_POWER_ON);
-			   HAL_Delay(5);
-			   buzzer_temp_on=0;
+		MqttData_Publish_SetOpen(1);  
+		HAL_Delay(300);
 
-		
-		
-	   	
-	  run_t.response_wifi_signal_label = 0xff;
+		run_t.ptc_too_hot_warning =0;
+		run_t.fan_warning =0;
+		run_t.ptc_remove_warning_send_data =0;
+		run_t.rx_command_tag= POWER_ON;//RUN_COMMAND;
+		//run_t.RunCommand_Label=POWER_ON;
+		SendWifiCmd_To_Order(WIFI_POWER_ON);
+		HAL_Delay(5);
+		buzzer_temp_on=0;
+		run_t.response_wifi_signal_label = 0xff;
 
 	  break;
 
