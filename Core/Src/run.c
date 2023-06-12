@@ -386,11 +386,20 @@ void RunCommand_MainBoard_Fun(void)
 		run_t.gTimer_continuce_works_time=0;
 		
 		fan_continuce =0;
-	
+
+
+
+        if( run_t.ptc_remove_warning_send_data ==0){
+		 	run_t.ptc_remove_warning_send_data++;
+		  	Publish_Data_Warning(ptc_temp_warning,0);
+		  	HAL_Delay(100);
+			Publish_Data_Warning(fan_warning,0);
+			HAL_Delay(100);
+        }
        
         
-	    MqttData_Publish_PowerOff_Ref(); 
-	    HAL_Delay(300);
+	    //MqttData_Publish_PowerOff_Ref(); 
+	    //HAL_Delay(100);
 		SetPowerOff_ForDoing();
          run_t.gFan_counter=0;
 	    run_t.RunCommand_Label = FAN_CONTINUCE_RUN_ONE_MINUTE;
@@ -440,13 +449,7 @@ void RunCommand_MainBoard_Fun(void)
 
 
 	 }
-     if( run_t.ptc_remove_warning_send_data ==0){
-	 	run_t.ptc_remove_warning_send_data++;
-	  	Publish_Data_Warning(ptc_temp_warning,0);
-	  	HAL_Delay(100);
-		Publish_Data_Warning(fan_warning,0);
-		HAL_Delay(100);
-     }
+    
 	 break;
 
 	 case 1:
@@ -560,7 +563,7 @@ void RunCommand_MainBoard_Fun(void)
 	break;
 
 	case POWER_ON_FAN_CONTINUCE_RUN_ONE_MINUTE:
-
+  
 	    
 	 if(run_t.gPower_On ==POWER_ON && run_t.gFan_continueRun ==1){
 
@@ -659,7 +662,7 @@ void RunCommand_Connect_Handler(void)
 		 run_t.set_wind_speed_value=100;
 		 run_t.ptc_too_hot_warning =0;
 		 run_t.fan_warning =0;
-		 run_t.ptc_remove_warning_send_data =0;
+		 
 		 Update_DHT11_Value();
 		 HAL_Delay(10);
 		 if(esp8266data.esp8266_login_cloud_success==1){
@@ -668,7 +671,7 @@ void RunCommand_Connect_Handler(void)
 		     run_t.gDry =1;
 			 run_t.set_wind_speed_value=100;
              run_t.wifi_gPower_On=1;
-	
+	        run_t.ptc_remove_warning_send_data =0;
 
 			 MqttData_Publish_SetOpen(1);  
 				HAL_Delay(200);
@@ -683,7 +686,7 @@ void RunCommand_Connect_Handler(void)
 
 	   case POWER_OFF:
 		  PTC_SetLow();
-
+          run_t.ptc_remove_warning_send_data =0;
 	      run_t.gPower_On=POWER_OFF;
         run_t.gPower_flag = POWER_OFF;
         run_t.RunCommand_Label = POWER_OFF;

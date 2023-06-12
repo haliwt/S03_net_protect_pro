@@ -13,7 +13,7 @@ static void SetLevel_Fan_PWMA(uint8_t levelval);
 
 void FAN_CCW_RUN(void)
 {
-  // FAN_CW_SetLow();
+   FAN_CW_SetLow();
    SetLevel_Fan_PWMA(100);
   
 }
@@ -37,32 +37,32 @@ void Fan_One_Power_Off_Speed(void)
 
 
 }
-
+#if 0
 void Fan_One_Speed(void)
 {
 
-	SetLevel_Fan_PWMA(23);
+	SetLevel_Fan_PWMA(10);
 
 
 }
 
 void Fan_Two_Speed(void)
 {
-	SetLevel_Fan_PWMA(24);
+	SetLevel_Fan_PWMA(18);
 	//FAN_CW_SetLow(); //brake
 	//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6,GPIO_PIN_SET);
 }
 
  void Fan_Full_Speed(void)
 {
-    SetLevel_Fan_PWMA(25);
+    SetLevel_Fan_PWMA(20);
    // FAN_CW_SetLow(); //brake
 	///HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6,GPIO_PIN_SET);
 
 }
+#endif 
 
-
-#if 0
+#if 1
 void Fan_Two_Speed(void)
 {
    static uint16_t fan_speed;
@@ -91,7 +91,7 @@ void Fan_Two_Speed(void)
 }
 #endif 
 
-#if 0
+#if 1
 void Fan_One_Speed(void)
 {
     static uint16_t fan_speed;
@@ -121,6 +121,16 @@ void Fan_One_Speed(void)
 
 }
 #endif 
+
+
+void Fan_Full_Speed(void)
+{
+   
+    FAN_CW_SetLow(); //brake
+	FAN_CCW_SetHigh(); 
+
+}
+
 
 #if 0
 void Fan_Slowly_Speed(void)

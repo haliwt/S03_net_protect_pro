@@ -303,7 +303,7 @@ void Judge_PTC_Temperature_Value(void)
 void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 {
 	uint16_t adc_fan_hex;
-	Fan_Full_Speed();
+   Fan_Full_Speed();
    adc_fan_hex = Get_Adc_Average(channel,times);
 
     fan_detect_voltage  =(uint16_t)((adc_fan_hex * 3300)/4096); //amplification 1000 ,3.111V -> 3111

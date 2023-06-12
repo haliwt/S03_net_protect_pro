@@ -3,12 +3,12 @@
 #include "main.h"
 
 
-//#define FAN_CCW       GPIO_PIN_6
+#define FAN_CCW       GPIO_PIN_6
 #define FAN_CW        GPIO_PIN_7
 #define FAN_GPIO      GPIOA
 
-//#define FAN_CCW_SetHigh()            HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_SET)    // output high level
-//#define FAN_CCW_SetLow()             HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_RESET)    // output low level
+#define FAN_CCW_SetHigh()            HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_SET)    // output high level
+#define FAN_CCW_SetLow()             HAL_GPIO_WritePin(FAN_GPIO,FAN_CCW,GPIO_PIN_RESET)    // output low level
 
 #define FAN_CW_SetHigh()            HAL_GPIO_WritePin(FAN_GPIO,FAN_CW,GPIO_PIN_SET)    // output high level
 #define FAN_CW_SetLow()             HAL_GPIO_WritePin(FAN_GPIO,FAN_CW,GPIO_PIN_RESET)    // output low level
