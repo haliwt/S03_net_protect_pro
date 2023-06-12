@@ -384,6 +384,7 @@ void RunCommand_MainBoard_Fun(void)
 		
 		run_t.interval_time_stop_run =0;
 		run_t.gTimer_continuce_works_time=0;
+		wifi_t.gTimer_subscriber_send=0;
 		
 		fan_continuce =0;
 
@@ -395,6 +396,7 @@ void RunCommand_MainBoard_Fun(void)
 		  	HAL_Delay(100);
 			Publish_Data_Warning(fan_warning,0);
 			HAL_Delay(100);
+			
         }
        
         
@@ -403,7 +405,9 @@ void RunCommand_MainBoard_Fun(void)
 		SetPowerOff_ForDoing();
          run_t.gFan_counter=0;
 	    run_t.RunCommand_Label = FAN_CONTINUCE_RUN_ONE_MINUTE;
-		  
+
+		Subscriber_Data_FromCloud_Handler();
+		HAL_Delay(350);
 		 
          
        if(run_t.app_timer_power_off_flag==1){ 

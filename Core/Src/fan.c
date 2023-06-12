@@ -71,23 +71,30 @@ void Fan_One_Speed(void)
 	
 	FAN_CW_SetLow();
 
-	if(fan_speed ==1)  FAN_CCW_SetLow(); //brake//Run fan//brake/Run fan //Run fan//brake //Run fan //brake //Run fan
+	//if(fan_speed ==1)  FAN_CCW_SetLow(); //brake//Run fan//brake/Run fan //Run fan//brake //Run fan //brake //Run fan
 	
 
     #if 1
-	if(fan_speed % 2 ==0  && fan_speed % 4 !=0 ){
+	if(fan_speed % 2 ==0 ){
 	   FAN_CCW_SetHigh(); //Run fan
     }
-    if( fan_speed % 4 ==0 && fan_speed % 2 !=0){
+	
+//    if( fan_speed % 4 ==0 && fan_speed % 2 !=0){
+//  
+//	  FAN_CCW_SetLow(); //brake
+//	  
+//	}
+	if( fan_speed % 3 ==0 || fan_speed % 8 ==0 ){
   
 	  FAN_CCW_SetLow(); //brake
 	  
 	}
 
-	if(fan_speed > 15000){ //
+	if(fan_speed > 60000){ //
 		fan_speed =0;
-	    
+
 	     FAN_CCW_SetLow(); //brake
+	     //FAN_CCW_SetHigh(); //Run fan
 	}
 	#endif 
 

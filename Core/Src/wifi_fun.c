@@ -154,29 +154,30 @@ void RunWifi_Command_Handler(void)
 		
 		case wifi_tencent_subscription_data://04
            
-			if(esp8266data.gTimer_subscription_timing>3 && first_sub==0  ){
-				first_sub++;
+			if(esp8266data.gTimer_subscription_timing>3  ){
+				
 				 SendWifiData_To_Cmd(0x01) ;	//WT.EDIT 2023.03.02
 				 HAL_Delay(500);
 				esp8266data.gTimer_subscription_timing=0;
 			 	esp8266data.gTimer_publish_timing=0;
 			 	Subscriber_Data_FromCloud_Handler();
-				HAL_Delay(1000);
-			 	wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
+				HAL_Delay(350);
+			 	//wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
 				wifi_t.gTimer_get_beijing_time=0;
 				 run_t.gTimer_ptc_adc_times=0;
-				  run_t.gTimer_fan_adc_times=0;
+				 run_t.gTimer_fan_adc_times=0;
+				 wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
 					
 			}
 			
-			if(esp8266data.gTimer_subscription_timing>59){
-                 esp8266data.gTimer_subscription_timing=0;
-	            Subscriber_Data_FromCloud_Handler();
-			    HAL_Delay(200);
-			
-				wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
-
-            }
+//			if(esp8266data.gTimer_subscription_timing>59){
+//                 esp8266data.gTimer_subscription_timing=0;
+//	            Subscriber_Data_FromCloud_Handler();
+//			    HAL_Delay(350);
+//			
+//				wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
+//
+//            }
 
 		//if(esp8266data.gTimer_publish_dht11 >12)wifi_t.runCommand_order_lable= wifi_tencent_publish_dht11_data;
 
@@ -184,15 +185,15 @@ void RunWifi_Command_Handler(void)
 
 	   	case wifi_publish_update_tencent_cloud_data://05
             
-             if(wifi_t.gTimer_subscriber_send > 94 || sub_send_power_on_times<3){
-				 wifi_t.gTimer_subscriber_send=0;
-                 sub_send_power_on_times++;
-				 Subscriber_Data_FromCloud_Handler();
-			     HAL_Delay(350);
-				  
-
-			}
-	   	      	
+//             if(wifi_t.gTimer_subscriber_send > 94 || sub_send_power_on_times==0){
+//				 wifi_t.gTimer_subscriber_send=0;
+//                 sub_send_power_on_times++;
+//				 Subscriber_Data_FromCloud_Handler();
+//			     HAL_Delay(350);
+//				  
+//
+//			}
+//	   	      	
 
 		      while(run_t.beijing_time_flag == 1 && run_t.gPower_flag ==POWER_ON){
 				run_t.beijing_time_flag ++;
