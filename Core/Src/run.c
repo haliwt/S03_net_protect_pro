@@ -639,6 +639,20 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 		}
        run_t.gTimer_ptc_adc_times=0;
     }
+
+	 if(esp8266data.esp8266_login_cloud_success==1 && run_t.gPower_On  !=POWER_ON ){
+       
+           if(send_power_off_flag==0){
+            send_power_off_flag++;
+		    //run_t.RunCommand_Label=POWER_OFF;
+		    run_t.rx_command_tag= POWER_OFF;
+			//wifi_t.runCommand_order_lable = wifi_publish_update_tencent_cloud_data
+			SendWifiData_To_Cmd(0x01) ;
+			HAL_Delay(50);
+               
+           }
+   			
+	}
     
    
 }
