@@ -100,7 +100,6 @@ void RunWifi_Command_Handler(void)
 	       
 			wifi_t.has_been_login_flag = 1;
 			wifi_t.get_rx_beijing_time_enable=0;
-			sub_to_tencent_flag=0;
 			wifi_t.runCommand_order_lable = wifi_tencent_publish_init_data;//wifi_tencent_subscription_data;
 			
 				
@@ -178,12 +177,7 @@ void RunWifi_Command_Handler(void)
 		break;
 
 	   	case wifi_publish_update_tencent_cloud_data://05
-               if(sub_to_tencent_flag < 5){
-			   	  sub_to_tencent_flag++;
-                  Subscriber_Data_FromCloud_Handler();
-				  HAL_Delay(350);
-
-               	}
+            
 		      while(run_t.beijing_time_flag == 1 && run_t.gPower_flag ==POWER_ON){
 				run_t.beijing_time_flag ++;
 				wifi_t.gTimer_get_beijing_time=0;
