@@ -56,19 +56,15 @@ void InitWifiModule(void)
 {
 	
 	if(run_t.wifi_config_net_lable==0){
-					run_t.wifi_config_net_lable++;
+		 run_t.wifi_config_net_lable++;
 			
 			WIFI_IC_ENABLE();
 	
 	
 			at_send_data("AT+RST\r\n", strlen("AT+RST\r\n"));
 			HAL_Delay(100);
-			//at_send_data("AT
-			
-			
-		}
-		//HAL_UART_Abort(&huart2);
-
+	}
+		
 }
 
 void InitWifiModule_Hardware(void)

@@ -389,7 +389,7 @@ void Subscribe_Rx_Interrupt_Handler(void)
 void Wifi_Rx_InputInfo_Handler(void)
 {
     
-          strcpy((char *)esp8266data.data, (const char *)UART2_DATA.UART_Data);
+           strcpy((char *)esp8266data.data, (const char *)UART2_DATA.UART_Data);
           esp8266data.data_size = UART2_DATA.UART_Cnt;
 
 
@@ -397,20 +397,34 @@ void Wifi_Rx_InputInfo_Handler(void)
 
                if(strstr((const char*)esp8266data.data,"+TCSAP:WIFI_CONNECT_SUCCESS")){
               		esp8266data.soft_ap_config_success=1;
-              		esp8266data.linking_tencent_cloud_doing =0;
 					wifi_t.soft_ap_config_flag=0;
                	}
 
-			}
+			
             else{
 				  if(strstr((const char*)esp8266data.data,"+TCMQTTCONN:OK")){
 	              esp8266data.esp8266_login_cloud_success=1;
 	              esp8266data.linking_tencent_cloud_doing=0;
 				  run_t.auto_link_cloud_flag=0xff;
 				  wifi_t.wifi_reconnect_read_flag = 0;
+				  wifi_t.soft_ap_config_flag=0;
 			  }
            
            }
+		  }
+		  else{
+
+		     if(strstr((const char*)esp8266data.data,"+TCMQTTCONN:OK")){
+	              esp8266data.esp8266_login_cloud_success=1;
+	              esp8266data.linking_tencent_cloud_doing=0;
+				  run_t.auto_link_cloud_flag=0xff;
+				  wifi_t.wifi_reconnect_read_flag = 0;
+				  wifi_t.soft_ap_config_flag=0;
+			  }
+
+
+
+		  }
          UART2_DATA.UART_Flag = 0;
          UART2_DATA.UART_Cnt=0;
          
@@ -432,12 +446,12 @@ void Tencent_Cloud_Rx_Handler(void)
     if( esp8266data.rx_data_success==1){
             esp8266data.rx_data_success=0;
         
-	     // run_t.set_beijing_time_flag =0; //WT.EDIT 2023.06.12
-		  wifi_t.get_rx_beijing_time_enable=0; //enable beijing times
+	      run_t.set_beijing_time_flag =0; //WT.EDIT 2023.06.12
+		 // wifi_t.get_rx_beijing_time_enable=0; //enable beijing times
 	
      if(wifi_t.received_data_from_tencent_cloud ==0x25){
 	    wifi_t.received_data_from_tencent_cloud=0;
-		run_t.set_beijing_time_flag =0; //WT.EDIT 2023.06.12
+		wifi_t.get_rx_beijing_time_enable=0;
 		run_t.response_wifi_signal_label = APP_TIMER_POWER_ON_REF;
 	    __HAL_UART_CLEAR_OREFLAG(&huart2);
 		strcpy((char*)TCMQTTRCVPUB,(char *)UART2_DATA.UART_Data);

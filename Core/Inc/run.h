@@ -136,7 +136,8 @@ typedef struct _RUN_T{
 	  
       uint8_t  Single_cmd ;
 	  uint8_t send_link_cloud_times;
-	  
+	  //wifi link ref
+	  uint8_t first_link_tencent_cloud_flag ;
 	
 	  uint8_t noBuzzer_sound_dry_flag;
 	  
@@ -166,6 +167,8 @@ typedef struct _RUN_T{
 	  uint8_t gTimer_ptc_adc_times;
       uint8_t fan_warning;
 	  uint8_t fan_warning_send_data ;
+
+	  
 	  
 	  
 

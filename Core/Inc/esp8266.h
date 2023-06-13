@@ -67,15 +67,6 @@ typedef struct ESP8266_DATA
 	uint8_t send_tencent_cloud_data_lable;
     uint8_t subscrible_receive_data_label;
 	
-
-
-
-	uint8_t gTimer_subscription_timing;
-
- 
-	uint8_t gTimer_publish_timing;
-	
-	
 }ESP8266DATATypedef;
 
 void InitWifiModule_Hardware(void);

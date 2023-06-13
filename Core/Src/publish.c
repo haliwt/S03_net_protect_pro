@@ -93,11 +93,11 @@ static void property_report_fan_warning(uint8_t warning)
 ********************************************************************************/
 void Publish_Data_ToTencent_Initial_Data(void)
 {
-    if(esp8266data.esp8266_login_cloud_success==1){
+    
           
-       MqttData_Publish_Init();
+      MqttData_Publish_Init();
 	         
-	}
+	
 
 }
 	
