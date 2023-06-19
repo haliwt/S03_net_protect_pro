@@ -67,20 +67,10 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
    if(huart==&huart1){
 
 
-      if(run_t.gTimer_usart_error >39){
+      if(run_t.gTimer_usart_error >27){
 	  	run_t.gTimer_usart_error=0;
-	      __HAL_UART_GET_FLAG(&huart1,UART_FLAG_ORE);//UART_FLAG_NE
-         __HAL_UART_GET_FLAG(&huart1,UART_FLAG_NE); //USART_ISR_FE
-         __HAL_UART_GET_FLAG(&huart1,USART_ISR_FE);
-		 
-		
-         if(UART_FLAG_ORE==1 ){
-           __HAL_UART_CLEAR_OREFLAG(&huart1);
-              __HAL_UART_CLEAR_NEFLAG(&huart1);
-               __HAL_UART_CLEAR_FEFLAG(&huart1);
-
-        
-          temp = USART1->RDR;
+	     __HAL_UART_CLEAR_OREFLAG(&huart1);
+		 temp = USART1->RDR;
 
 		  UART_Start_Receive_IT(&huart1,inputBuf,1);
 		
@@ -90,8 +80,8 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
           
         }
   	  
-   	}
-}
+ }
+
 
 void USART2_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 {
@@ -102,19 +92,10 @@ void USART2_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 
       if(run_t.gTimer_usart2_error >5){
 	  	run_t.gTimer_usart2_error=0;
-//	      __HAL_UART_GET_FLAG(&huart2,UART_FLAG_ORE);//UART_FLAG_NE
-//         __HAL_UART_GET_FLAG(&huart2,UART_FLAG_NE); //USART_ISR_FE
-//         __HAL_UART_GET_FLAG(&huart2,USART_ISR_FE);
-//		UART_Start_Receive_IT(&huart2,(uint8_t *)UART2_DATA.UART_DataBuf,1);
-//		
-//         if(UART_FLAG_ORE==1 ){
-           __HAL_UART_CLEAR_OREFLAG(&huart2);
-            //  __HAL_UART_CLEAR_NEFLAG(&huart2);
-             //  __HAL_UART_CLEAR_FEFLAG(&huart2);
 
-          
-          
-          temp=USART2->ISR;
+           __HAL_UART_CLEAR_OREFLAG(&huart2);
+        
+
           temp = USART2->RDR;
 
 		   UART_Start_Receive_IT(&huart2,(uint8_t *)UART2_DATA.UART_DataBuf,1);

@@ -128,6 +128,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			state=0;
 			run_t.decodeFlag =0;
 		}
+		__HAL_UART_CLEAR_OREFLAG(&huart1); //WT.EDIT 2023.06.16
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 		
 	 }
