@@ -90,7 +90,7 @@ void USART2_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 	if(huart==&huart2){
 
 
-      if(run_t.gTimer_usart2_error >5){
+      if(run_t.gTimer_usart2_error >11){
 	  	run_t.gTimer_usart2_error=0;
 
            __HAL_UART_CLEAR_OREFLAG(&huart2);

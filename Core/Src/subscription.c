@@ -607,7 +607,7 @@ void Json_Parse_Command_Fun(void)
 		MqttData_Publish_SetOpen(1);  
 		HAL_Delay(300);
 
-		run_t.ptc_too_hot_warning =0;
+		run_t.ptc_warning =0;
 		run_t.fan_warning =0;
 		run_t.ptc_remove_warning_send_data =0;
 		run_t.rx_command_tag= POWER_ON;//RUN_COMMAND;
@@ -621,22 +621,27 @@ void Json_Parse_Command_Fun(void)
 
 	  case PTC_ON_ITEM:
 	  if(run_t.gPower_flag ==POWER_ON){
-	    if(run_t.ptc_too_hot_warning ==0){
+	    if(run_t.ptc_warning ==0){
          MqttData_Publish_SetPtc(0x01);
 	  	 HAL_Delay(350);
 	     run_t.gDry=1;
 		
 		 SendWifiCmd_To_Order(WIFI_PTC_ON);
 		 HAL_Delay(5);
-		 buzzer_temp_on=0;
-          run_t.response_wifi_signal_label=0xff;
+		
 	     }
 		 else{
-
-			run_t.response_wifi_signal_label=PTC_OFF_ITEM;
+			run_t.gDry=0;
+			MqttData_Publish_SetPtc(0);
+		     HAL_Delay(350);
+			SendWifiCmd_To_Order(WIFI_PTC_OFF);
+            HAL_Delay(5);
 		 }
+
+		  buzzer_temp_on=0;
+          run_t.response_wifi_signal_label=0xff;
 	  	}
-	
+	    
 	   break;
 
 	  case PTC_OFF_ITEM:
@@ -648,9 +653,11 @@ void Json_Parse_Command_Fun(void)
 		
 		 SendWifiCmd_To_Order(WIFI_PTC_OFF);
          HAL_Delay(5);
-	  	}
+	  	
 		buzzer_temp_on=0;
 	     run_t.response_wifi_signal_label = 0xff;
+
+	  	}
 	  	break;
 
 	  case ANION_OFF_ITEM: //"杀菌" //5

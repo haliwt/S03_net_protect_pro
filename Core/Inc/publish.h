@@ -18,6 +18,15 @@ typedef enum{
 }warning_item;
 
 
+typedef enum{
+
+    no_warning,
+	warning
+
+
+}warning_state;
+
+
 
 
 void Publish_Data_ToTencent_Initial_Data(void);

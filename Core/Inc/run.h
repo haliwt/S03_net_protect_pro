@@ -33,7 +33,7 @@ typedef enum{
    FAN_CONTINUCE_RUN_ONE_MINUTE,
    POWER_ON_FAN_CONTINUCE_RUN_ONE_MINUTE,
   
-   POWER_NULL,
+   POWER_NULL, //9
    KEY_NULL
 
  }run_state_t;
@@ -155,7 +155,7 @@ typedef struct _RUN_T{
 	  uint8_t  wind_speed_unit;
       uint8_t wifi_config_net_lable;
 	  //ADC
-	  uint8_t ptc_too_hot_warning;
+	  uint8_t ptc_warning;
 	  uint8_t ptc_remove_warning_send_data;
 
 
@@ -166,7 +166,7 @@ typedef struct _RUN_T{
 	  uint8_t gTimer_fan_adc_times;
 	  uint8_t gTimer_ptc_adc_times;
       uint8_t fan_warning;
-	  uint8_t fan_warning_send_data ;
+	
 
 	  
 	  
@@ -176,6 +176,7 @@ typedef struct _RUN_T{
 	uint8_t gTimer_senddata_panel;
 	
 	 uint16_t ptc_temp_voltage;
+	 uint16_t gTimer_linking_tencen_counter;
 	
 	uint16_t gTimer_usart2_error;
 	uint16_t gTimer_continuce_works_time;

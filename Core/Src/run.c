@@ -58,6 +58,7 @@ void Decode_RunCmd(void)
 		     // InitWifiModule_Hardware();
                esp8266data.esp8266_login_cloud_success=0;
               run_t.wifi_config_net_lable=wifi_set_restor;
+			  run_t.gTimer_linking_tencen_counter=0;
               wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
          
 	  
@@ -359,6 +360,9 @@ void RunCommand_MainBoard_Fun(void)
 	     run_t.gTimer_senddata_panel=0;
 		 run_t.gTimer_app_power_on=0;
 		 run_t.app_timer_power_off_flag =0;
+		 //error detected times 
+		 run_t.gTimer_ptc_adc_times=0;
+		 run_t.gTimer_fan_adc_times=0;
 	    power_on_flag=0;
 	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
 	   
@@ -425,34 +429,101 @@ void RunCommand_MainBoard_Fun(void)
 
      switch(run_t.interval_time_stop_run){
 
-	 case 0:
+	 case 0: //works timing 
 	  if(run_t.gTimer_senddata_panel >50 ){ //300ms
 	   	    run_t.gTimer_senddata_panel=0;
 	        ActionEvent_Handler();
 	    }
 
-	 if(run_t.gTimer_ptc_adc_times > 2  ){ //3 minutes 120s
+	 if(run_t.gTimer_ptc_adc_times > 72 ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
 		 
-		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
+		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
 	     Judge_PTC_Temperature_Value();
 
 	 }
 
-	 if(run_t.gTimer_fan_adc_times > 92){ //2 minute 180s
+	 if(run_t.gTimer_fan_adc_times > 64){ //2 minute 180s
 	     run_t.gTimer_fan_adc_times =0;
-	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,30);
+	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,10);
 	     
 
 		 
 	 }
 
-	 if(run_t.fan_warning_send_data  ==1){
-	 	run_t.fan_warning_send_data  =0;
-	    SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
 
 
+	 if(run_t.fan_warning==warning){
+	   if(run_t.gTimer_fan_adc_times > 61){
+	   	run_t.gTimer_fan_adc_times =0;
+
+      Publish_Data_Warning(fan_warning,0x01);
+	  HAL_Delay(350);
+	   SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
+	   HAL_Delay(5);
+
+	   }
 	 }
+
+	 if(run_t.ptc_warning ==warning){
+
+	   if(run_t.gTimer_ptc_adc_times > 72){
+          run_t.gTimer_ptc_adc_times=0;
+
+	    Publish_Data_Warning(ptc_temp_warning,0x01);
+		HAL_Delay(350);
+		SendWifiCmd_To_Order(PTC_ERROR); //0xE0
+		HAL_Delay(5);
+
+       }
+
+    }
+
+	 
+	if(run_t.gTimer_send_dit > 49){
+	
+			 run_t.gTimer_send_dit=0;
+			 Update_DHT11_Value();
+		
+		}
+		
+	
+	
+	  
+	
+	   if(run_t.gTimer_app_power_on >37 &&	 run_t.app_timer_power_on_flag == 1){
+		run_t.gTimer_app_power_on=0;
+		run_t.app_timer_power_on_flag++;
+		   for(i=0;i<36;i++){
+				 TCMQTTRCVPUB[i]=0;
+			 }
+			
+		  
+		   
+	   }
+	
+	
+	
+	   if(run_t.first_link_tencent_cloud_flag ==1){
+	
+		  run_t.first_link_tencent_cloud_flag++;
+			MqttData_Publish_SetOpen(0x01);
+			HAL_Delay(100);
+			Publish_Data_ToTencent_Initial_Data();
+			HAL_Delay(350);
+	
+		   Subscriber_Data_FromCloud_Handler();
+		   HAL_Delay(350);
+	   }
+    
+
+	//if(run_t.gTimer_continuce_works_time > 7200){
+	if(run_t.gTimer_continuce_works_time > 600){
+	     run_t.gTimer_continuce_works_time =0;
+         run_t.interval_time_stop_run =1;
+	     run_t.gFan_continueRun =1;
+		 run_t.gFan_counter=0;
+    }
     
 	 break;
 
@@ -461,6 +532,8 @@ void RunCommand_MainBoard_Fun(void)
 		PLASMA_SetLow(); //
 		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);//ultrasnoic Off 
 		PTC_SetLow();
+
+	
 	  if(run_t.gTimer_continuce_works_time > 600){
               run_t.gTimer_continuce_works_time=0;
 		    run_t.interval_time_stop_run =0;
@@ -470,18 +543,18 @@ void RunCommand_MainBoard_Fun(void)
 
 	 if(run_t.gFan_continueRun ==1){
 
-              if(run_t.gFan_counter < 60){
-          
-                      Fan_One_Power_Off_Speed();//Fan_RunSpeed_Fun();// FAN_CCW_RUN();
-                  }       
+	      if(run_t.gFan_counter < 60){
+	  
+	              Fan_One_Power_Off_Speed();//Fan_RunSpeed_Fun();// FAN_CCW_RUN();
+	          }       
 
-	           if(run_t.gFan_counter > 59){
-		           
-				   run_t.gFan_counter=0;
-				
-				   run_t.gFan_continueRun++;
-				   FAN_Stop();
-	           }
+	       if(run_t.gFan_counter > 59){
+	           
+			   run_t.gFan_counter=0;
+			
+			   run_t.gFan_continueRun++;
+			   FAN_Stop();
+	       }
 
 	  }
 	 
@@ -490,49 +563,8 @@ void RunCommand_MainBoard_Fun(void)
 
      }
      
-     if(run_t.gTimer_send_dit > 49){
+    
 
-          run_t.gTimer_send_dit=0;
-		  Update_DHT11_Value();
-	 
-     }
-	 
-
-
-   
-
-	if(run_t.gTimer_app_power_on >37 &&   run_t.app_timer_power_on_flag == 1){
-     run_t.gTimer_app_power_on=0;
-	 run_t.app_timer_power_on_flag++;
-	    for(i=0;i<36;i++){
-		      TCMQTTRCVPUB[i]=0;
-		  }
-         
-       
-		
-	}
-
-	if(run_t.gTimer_continuce_works_time > 7200){
-	     run_t.gTimer_continuce_works_time =0;
-         run_t.interval_time_stop_run =1;
-	     run_t.gFan_continueRun =1;
-		 run_t.gFan_counter=0;
-    }
-
-	if(run_t.first_link_tencent_cloud_flag ==1){
-
-	   run_t.first_link_tencent_cloud_flag++;
-		 MqttData_Publish_SetOpen(0x01);
-         HAL_Delay(100);
-         Publish_Data_ToTencent_Initial_Data();
-		 HAL_Delay(350);
-
-		Subscriber_Data_FromCloud_Handler();
-		HAL_Delay(350);
-
-
-
-	}
 
 	
     break;
@@ -677,7 +709,7 @@ void RunCommand_Connect_Handler(void)
          run_t.RunCommand_Label= POWER_ON;
 		  run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
-		 run_t.ptc_too_hot_warning =0;
+		 run_t.ptc_warning =0;
 		 run_t.fan_warning =0;
 		 
 		 Update_DHT11_Value();

@@ -20,7 +20,8 @@ typedef enum _wifi_state_t{
 	wifi_publish_update_tencent_cloud_data,//5
 	wifi_tencent_publish_dht11_data,
 	wifi_get_beijing_time,
-	wifi_disconnect
+	wifi_disconnect,
+	wifi_null
 
 
 }wifi_state_t;

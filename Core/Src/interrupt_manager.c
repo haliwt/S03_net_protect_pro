@@ -146,20 +146,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 
-    static uint8_t tm0,tm1;
+    static uint8_t tm0;
     if(htim->Instance==TIM3){
 		
 	   tm0 ++ ;
        run_t.gTimer_senddata_panel++;
 	 if(tm0 > 99){//100ms *10 = 1000ms =1s
         tm0 =0;
-		tm1++;
-    
-      
 	
-	 
-
-	    wifi_t.gTimer_get_beijing_time++;
+        wifi_t.gTimer_get_beijing_time++;
 
 	    run_t.gTimer_publish_dht11++;
 	    run_t.gTimer_app_power_on++;
@@ -168,7 +163,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	   run_t.gTimer_usart_error++;
 	   wifi_t.gTimer_reconnect_wifi++;
-	   run_t.gTimer_usart2_error++;
+	   
 
 	   run_t.gTimer_to_publish_updata++;
 	   run_t.gTimer_send_dit++;
@@ -177,12 +172,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	   wifi_t.gTimer_subscriber_send ++;
 	   run_t.gTimer_continuce_works_time++;
 	   run_t.gTimer_fan_adc_times++;
-	 
-	   if(tm1>59){
-	   	  tm1=0;
-		 run_t.gTimer_ptc_adc_times++;
+	   run_t.gTimer_ptc_adc_times++;
 
-	   }
+	  run_t.gTimer_usart2_error++;
+	  run_t.gTimer_linking_tencen_counter++;
+	 
 	  
 	   if(run_t.gFan_continueRun ==1){
            run_t.gFan_counter++;

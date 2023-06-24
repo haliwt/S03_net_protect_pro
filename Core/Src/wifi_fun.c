@@ -16,6 +16,7 @@
 WIFI_FUN   wifi_t;
 uint8_t sub_send_power_on_times;
 
+
 void (*PowerOn)(void);
 void (*PowerOff)(void);
 void (*Ai_Fun)(uint8_t sig);
@@ -124,6 +125,15 @@ void RunWifi_Command_Handler(void)
 				
 			}
 		   }
+           
+           if(esp8266data.esp8266_login_cloud_success==0){
+             if(run_t.gTimer_linking_tencen_counter < 166){
+                 wifi_t.runCommand_order_lable = wifi_link_tencent_cloud;
+             }
+             else
+              wifi_t.runCommand_order_lable = wifi_null;
+           
+           }
 	    break;
 
 	  	
