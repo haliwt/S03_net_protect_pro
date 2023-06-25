@@ -347,47 +347,42 @@ static void AutoReconnect_Wifi_Neware_Function(void)
   
      static uint8_t det_no_wifi_net=0;
 			 
-				if(wifi_t.wifi_reconnect_read_flag == 1 && det_no_wifi_net==0){
-					 
-						det_no_wifi_net++;
-						run_t.auto_link_cloud_flag=0;
-						SendWifiData_To_Cmd(0x0) ;
-				
-	
-					  esp8266data.esp8266_login_cloud_success=0;
-	
-				  }
-	
-				   if(wifi_t.wifi_reconnect_read_flag == 1 && run_t.auto_link_cloud_flag==0 ){
-				   
-					   AutoRepeate_Link_Tencent_Cloud();
-					   wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
-					}
-					
-					if(det_no_wifi_net==1){
-						
-						if(esp8266data.esp8266_login_cloud_success==1){
-								 det_no_wifi_net=0;
-								 run_t.reconnect_tencent_cloud_flag=0;
-								run_t.auto_link_cloud_flag=0xff;
-								esp8266data.linking_tencent_cloud_doing =0;
-			
-								SendWifiData_To_Cmd(0x01) ;
-								HAL_Delay(30);
-							  
-								
-								Subscriber_Data_FromCloud_Handler();
-								HAL_Delay(300);
-	
-								Publish_Data_ToTencent_Update_Data();
-								HAL_Delay(300);
-						}
-							
-							
-						
-					}
-			
+	if(wifi_t.wifi_reconnect_read_flag == 1 && det_no_wifi_net==0){
 
+		det_no_wifi_net++;
+		run_t.auto_link_cloud_flag=0;
+		SendWifiData_To_Cmd(0x0) ;
+
+
+		esp8266data.esp8266_login_cloud_success=0;
+
+	}
+
+	if(wifi_t.wifi_reconnect_read_flag == 1 && run_t.auto_link_cloud_flag==0 ){
+
+		AutoRepeate_Link_Tencent_Cloud();
+		wifi_t.runCommand_order_lable= wifi_publish_update_tencent_cloud_data;
+	}
+
+	if(det_no_wifi_net==1){
+
+		if(esp8266data.esp8266_login_cloud_success==1){
+			det_no_wifi_net=0;
+			run_t.reconnect_tencent_cloud_flag=0;
+			run_t.auto_link_cloud_flag=0xff;
+			esp8266data.linking_tencent_cloud_doing =0;
+
+			SendWifiData_To_Cmd(0x01) ;
+			HAL_Delay(30);
+
+
+			Subscriber_Data_FromCloud_Handler();
+			HAL_Delay(300);
+
+			Publish_Data_ToTencent_Update_Data();
+			HAL_Delay(300);
+		}
+	}
 
 }
 

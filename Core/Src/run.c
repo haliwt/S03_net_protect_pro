@@ -47,23 +47,20 @@ void Decode_RunCmd(void)
       break;
       
 
-	  case 'W': //wifi-function
+	  case 'W': //wifi-linking_tencentcloud
 	      if(run_t.gPower_flag==POWER_ON){
 	      if(cmdType_2==1){
-
-		     // WIFI_IC_ENABLE();
-			  tencent_cloud_flag=0;
-			  // wifi_link_tencent_cloud:
-			  Buzzer_KeySound();	
-		     // InitWifiModule_Hardware();
-               esp8266data.esp8266_login_cloud_success=0;
-              run_t.wifi_config_net_lable=wifi_set_restor;
+              tencent_cloud_flag=0;
+			  Buzzer_KeySound();
+		      HAL_Delay(10);
+		      SendWifiData_To_Cmd(0x52); //0x52= 'R'
+		      HAL_Delay(50);    //WT.EDIT 2023.06.25
+		      esp8266data.esp8266_login_cloud_success=0;
+	          run_t.wifi_config_net_lable=wifi_set_restor;
 			  run_t.gTimer_linking_tencen_counter=0;
-              wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
-         
-	  
-			}
-		   else if(cmdType_2==0){
+	          wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
+          }
+		  else if(cmdType_2==0){
                 
                 Buzzer_KeySound();
 		   }
@@ -354,12 +351,13 @@ void RunCommand_MainBoard_Fun(void)
 
 	case POWER_ON: //1
 	     
-			SetPowerOn_ForDoing();
-	      run_t.gPower_On=POWER_ON;
+		 SetPowerOn_ForDoing();
+	     run_t.gPower_On=POWER_ON;
          run_t.gTimer_send_dit=0;
 	     run_t.gTimer_senddata_panel=0;
 		 run_t.gTimer_app_power_on=0;
 		 run_t.app_timer_power_off_flag =0;
+		 run_t.gTimer_continuce_works_time=0;
 		 //error detected times 
 		 run_t.gTimer_ptc_adc_times=0;
 		 run_t.gTimer_fan_adc_times=0;
@@ -486,25 +484,15 @@ void RunCommand_MainBoard_Fun(void)
 			 Update_DHT11_Value();
 		
 		}
-		
-	
-	
-	  
-	
-	   if(run_t.gTimer_app_power_on >37 &&	 run_t.app_timer_power_on_flag == 1){
+		if(run_t.gTimer_app_power_on >37 &&	 run_t.app_timer_power_on_flag == 1){
 		run_t.gTimer_app_power_on=0;
 		run_t.app_timer_power_on_flag++;
 		   for(i=0;i<36;i++){
 				 TCMQTTRCVPUB[i]=0;
 			 }
-			
-		  
-		   
-	   }
+		}
 	
-	
-	
-	   if(run_t.first_link_tencent_cloud_flag ==1){
+       if(run_t.first_link_tencent_cloud_flag ==1){
 	
 		  run_t.first_link_tencent_cloud_flag++;
 			MqttData_Publish_SetOpen(0x01);
@@ -517,8 +505,8 @@ void RunCommand_MainBoard_Fun(void)
 	   }
     
 
-	//if(run_t.gTimer_continuce_works_time > 7200){
-	if(run_t.gTimer_continuce_works_time > 600){
+	if(run_t.gTimer_continuce_works_time > 7200){//if(run_t.gTimer_continuce_works_time > 600){
+	
 	     run_t.gTimer_continuce_works_time =0;
          run_t.interval_time_stop_run =1;
 	     run_t.gFan_continueRun =1;
@@ -527,7 +515,7 @@ void RunCommand_MainBoard_Fun(void)
     
 	 break;
 
-	 case 1:
+	 case 1:  //interval times 10 minutes,stop works
 	 	
 		PLASMA_SetLow(); //
 		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);//ultrasnoic Off 
@@ -535,11 +523,9 @@ void RunCommand_MainBoard_Fun(void)
 
 	
 	  if(run_t.gTimer_continuce_works_time > 600){
-              run_t.gTimer_continuce_works_time=0;
+             run_t.gTimer_continuce_works_time=0;
 		    run_t.interval_time_stop_run =0;
-
-
-		}
+      }
 
 	 if(run_t.gFan_continueRun ==1){
 
@@ -552,7 +538,7 @@ void RunCommand_MainBoard_Fun(void)
 	           
 			   run_t.gFan_counter=0;
 			
-			   run_t.gFan_continueRun++;
+			   run_t.gFan_continueRun=0;
 			   FAN_Stop();
 	       }
 

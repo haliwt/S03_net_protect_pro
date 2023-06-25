@@ -176,17 +176,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	  run_t.gTimer_usart2_error++;
 	  run_t.gTimer_linking_tencen_counter++;
-	 
-	  
-	   if(run_t.gFan_continueRun ==1){
-           run_t.gFan_counter++;
-		 
-	   }
-	 
-          
-	   
-      
-
-	 }
+	  run_t.gFan_counter++;
+	  }
  	}
  }
