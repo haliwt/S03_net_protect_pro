@@ -10,10 +10,8 @@ void Buzzer_KeySound(void)
   unsigned int m=40;//40;//70;//70;//80;//80
 	while(m--){
 
-    HAL_GPIO_TogglePin(BUZZER_GPIO,BUZZER_PIN);//BEEP=!BEEP;
-    //delay_us(600);
-    //delay_us(500);//500//
-     delay_us(500);
+    HAL_GPIO_TogglePin(BUZZER_GPIO,BUZZER_PIN);//BEEP=!BEEP
+    delay_us(500);
     }
        
 }

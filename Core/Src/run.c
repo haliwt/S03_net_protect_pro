@@ -51,10 +51,9 @@ void Decode_RunCmd(void)
 	      if(run_t.gPower_flag==POWER_ON){
 	      if(cmdType_2==1){
               tencent_cloud_flag=0;
-			  Buzzer_KeySound();
-		      HAL_Delay(10);
-		      SendWifiData_To_Cmd(0x52); //0x52= 'R'
-		      HAL_Delay(50);    //WT.EDIT 2023.06.25
+			  SendWifiData_To_Cmd(0x52); //0x52= 'R'
+		      HAL_Delay(2);    //WT.EDIT 2023.06.25
+		      Buzzer_KeySound();
 		      esp8266data.esp8266_login_cloud_success=0;
 	          run_t.wifi_config_net_lable=wifi_set_restor;
 			  run_t.gTimer_linking_tencen_counter=0;
@@ -143,15 +142,16 @@ void Decode_RunCmd(void)
 static void Single_Power_ReceiveCmd(uint8_t cmd)
 {
 
-   
+   static uint8_t power_off_receive_flag;
     
     switch(cmd){
 
     case 0x01: // power on
     
-		 //   PTC_SetHigh();
-            Buzzer_KeySound();
+		     PTC_SetHigh();
+            power_off_receive_flag=0;
             run_t.rx_command_tag=POWER_ON;
+            Buzzer_KeySound();
 	     
 	  
 	    
@@ -163,9 +163,14 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
 
     case 0x00: //power off
      
-      //  PTC_SetLow();
-        Buzzer_KeySound();
+        PTC_SetLow();
+      
         run_t.rx_command_tag=POWER_OFF;
+        if(power_off_receive_flag==0){
+            power_off_receive_flag++;
+            Buzzer_KeySound();
+
+        }
         cmd = 0xff;
     break;
          
