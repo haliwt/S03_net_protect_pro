@@ -121,8 +121,8 @@ void Decode_RunCmd(void)
 	    if(run_t.gPower_flag==POWER_ON){
 
 		    if(cmdType_2== 'Z'){//turn off AI
-		        run_t.buzzer_sound_flag = 1;
-			   // Buzzer_KeySound();
+		       // run_t.buzzer_sound_flag = 1;
+			    Buzzer_KeySound();
 			}
 			 
 		
@@ -165,7 +165,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
      
       //  PTC_SetLow();
         Buzzer_KeySound();
-         run_t.rx_command_tag=POWER_OFF;
+        run_t.rx_command_tag=POWER_OFF;
         cmd = 0xff;
     break;
          
@@ -359,8 +359,12 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.app_timer_power_off_flag =0;
 		 run_t.gTimer_continuce_works_time=0;
 		 //error detected times 
+		 run_t.ptc_warning =0;
+		 run_t.fan_warning =0;
 		 run_t.gTimer_ptc_adc_times=0;
 		 run_t.gTimer_fan_adc_times=0;
+		 run_t.ptc_first_detected_times=0;
+		 
 	    power_on_flag=0;
 	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
 	   
@@ -380,6 +384,12 @@ void RunCommand_MainBoard_Fun(void)
 		run_t.interval_time_stop_run =0;
 		run_t.gTimer_continuce_works_time=0;
 		wifi_t.gTimer_subscriber_send=0;
+
+		  run_t.ptc_warning =0;
+		 run_t.fan_warning =0;
+		 run_t.gTimer_ptc_adc_times=0;
+		 run_t.gTimer_fan_adc_times=0;
+		 run_t.ptc_first_detected_times=0;
 		
 		fan_continuce =0;
 
@@ -389,9 +399,9 @@ void RunCommand_MainBoard_Fun(void)
         if( run_t.ptc_remove_warning_send_data ==0){
 		 	run_t.ptc_remove_warning_send_data++;
 		  	Publish_Data_Warning(ptc_temp_warning,0);
-		  	HAL_Delay(100);
+		  	HAL_Delay(200);
 			Publish_Data_Warning(fan_warning,0);
-			HAL_Delay(100);
+			HAL_Delay(200);
 			
         }
        
@@ -399,7 +409,7 @@ void RunCommand_MainBoard_Fun(void)
 	    run_t.RunCommand_Label = FAN_CONTINUCE_RUN_ONE_MINUTE;
 
 		Subscriber_Data_FromCloud_Handler();
-		HAL_Delay(100);
+		HAL_Delay(200);
 		 
          
        if(run_t.app_timer_power_off_flag==1){ 
@@ -433,58 +443,28 @@ void RunCommand_MainBoard_Fun(void)
 	        ActionEvent_Handler();
 	    }
 
-	 if(run_t.gTimer_ptc_adc_times > 72 ){ //3 minutes 120s
+	 if(run_t.gTimer_ptc_adc_times > 65 ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
 		 
 		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,10);
-	     Judge_PTC_Temperature_Value();
+	     
 
 	 }
-
-	 if(run_t.gTimer_fan_adc_times > 64){ //2 minute 180s
+     else if(run_t.gTimer_fan_adc_times > 45){ //2 minute 180s
 	     run_t.gTimer_fan_adc_times =0;
 	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,10);
 	     
 
 		 
 	 }
-
-
-
-	 if(run_t.fan_warning==warning){
-	   if(run_t.gTimer_fan_adc_times > 61){
-	   	run_t.gTimer_fan_adc_times =0;
-
-      Publish_Data_Warning(fan_warning,0x01);
-	  HAL_Delay(350);
-	   SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
-	   HAL_Delay(5);
-
-	   }
-	 }
-
-	 if(run_t.ptc_warning ==warning){
-
-	   if(run_t.gTimer_ptc_adc_times > 72){
-          run_t.gTimer_ptc_adc_times=0;
-
-	    Publish_Data_Warning(ptc_temp_warning,0x01);
-		HAL_Delay(350);
-		SendWifiCmd_To_Order(PTC_ERROR); //0xE0
-		HAL_Delay(5);
-
-       }
-
-    }
-
-	 
-	if(run_t.gTimer_send_dit > 49){
+	 else if(run_t.gTimer_send_dit > 49){
 	
 			 run_t.gTimer_send_dit=0;
 			 Update_DHT11_Value();
 		
-		}
-		if(run_t.gTimer_app_power_on >37 &&	 run_t.app_timer_power_on_flag == 1){
+	}
+	 
+	if(run_t.gTimer_app_power_on >37 &&	 run_t.app_timer_power_on_flag == 1){
 		run_t.gTimer_app_power_on=0;
 		run_t.app_timer_power_on_flag++;
 		   for(i=0;i<36;i++){
@@ -579,12 +559,8 @@ void RunCommand_MainBoard_Fun(void)
 			      
 				   FAN_Stop();
                    if(fan_continuce == 0){
-		 	       fan_continuce ++;
-			     //  Subscriber_Data_FromCloud_Handler();
-			     //  HAL_Delay(350);
-
-
-		            }
+		 	         fan_continuce ++;
+			       }
 				  
 	         }
 	  
@@ -695,8 +671,15 @@ void RunCommand_Connect_Handler(void)
          run_t.RunCommand_Label= POWER_ON;
 		  run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
+
+		 //error detected times 
 		 run_t.ptc_warning =0;
 		 run_t.fan_warning =0;
+		 run_t.gTimer_ptc_adc_times=0;
+		 run_t.gTimer_fan_adc_times=0;
+		 run_t.ptc_first_detected_times=0;
+
+		
 		 
 		 Update_DHT11_Value();
 		 HAL_Delay(10);

@@ -44,6 +44,19 @@ static void property_report_ptc_temp_wanrning(uint8_t warning)
 
 }
 
+static void property_report_fan_warning(uint8_t warning)
+{
+     char	message[128]    = {0};
+	 int	message_len	  = 0;
+	
+	
+	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"fan_warning\\\":%d}}\"\r\n",warning);
+								  
+	at_send_data((uint8_t *)message, message_len);
+
+}
+
+
 static void property_report_plasma_warning(uint8_t warning)
 {
      char	message[128]    = {0};
@@ -69,17 +82,6 @@ static void property_report_ultrasonic_warning(uint8_t warning)
 
 }
 
-static void property_report_fan_warning(uint8_t warning)
-{
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
-	
-	
-	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"fan_warning\\\":%d}}\"\r\n",warning);
-								  
-	at_send_data((uint8_t *)message, message_len);
-
-}
 
 
 

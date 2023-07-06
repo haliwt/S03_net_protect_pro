@@ -35,6 +35,8 @@
 
 static  uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
 static uint16_t Get_Adc_Channel(uint32_t ch)  ;
+static void Judge_PTC_Temperature_Value(void);
+
 uint8_t detect_error_times=0;
 volatile uint16_t  fan_detect_voltage;
 
@@ -225,16 +227,20 @@ static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times)
 
 void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 {
-    static uint8_t first;
-	
+    
 	adcx = Get_Adc_Average(channel,times);
 
     run_t.ptc_temp_voltage  =(uint16_t)((adcx * 3300)/4096); //amplification 100 ,3.11V -> 311
 
-	if(first < 1){ //power on the voltage is small 
-         first ++ ;
+	if(run_t.ptc_first_detected_times < 3){ //power on the voltage is small 
+        run_t.ptc_first_detected_times ++ ;
          run_t.ptc_temp_voltage = 500;
     }
+	else{
+		
+	  Judge_PTC_Temperature_Value();
+
+	}
    
 }
 
@@ -248,22 +254,26 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 	*
 	*
 *****************************************************************/
-void Judge_PTC_Temperature_Value(void)
+static void Judge_PTC_Temperature_Value(void)
 {
-  //if(run_t.ptc_temp_voltage < 54 || run_t.ptc_temp_voltage ==54){ //75 degree
+ 
+ 
+   //if(run_t.ptc_temp_voltage < 54 || run_t.ptc_temp_voltage ==54){ //75 degree
    
   //if(run_t.ptc_temp_voltage < 60 || run_t.ptc_temp_voltage ==60){ //70 degree
-  if(run_t.ptc_warning ==0){
+ 
 	  if(run_t.ptc_temp_voltage < 373 || run_t.ptc_temp_voltage ==373){ //90 degree
 		run_t.gDry =0 ;
 		PTC_SetLow(); //turn off
-		run_t.ptc_warning =1;
-		          
+        run_t.ptc_warning =1;
+        
+		MqttData_Publish_SetPtc(0);
+		HAL_Delay(350);  
 		
-		Publish_Data_Warning(ptc_temp_warning,0x01);
+		Publish_Data_Warning(ptc_temp_warning,warning);
 	    HAL_Delay(350);
 		Buzzer_KeySound();
-		HAL_Delay(200);
+		HAL_Delay(100);
 		Buzzer_KeySound();
 		HAL_Delay(100);
 		Buzzer_KeySound();
@@ -274,13 +284,17 @@ void Judge_PTC_Temperature_Value(void)
 		HAL_Delay(100);
 		SendWifiCmd_To_Order(PTC_ERROR); //0xE0
 		HAL_Delay(5);
-		MqttData_Publish_SetPtc(0);
-		HAL_Delay(350);
-		Buzzer_KeySound();	
+		
+
+		Publish_Data_Warning(ptc_temp_warning,warning);
+	    HAL_Delay(350);
+		
 			  
 				
 	   	}
-  	}
+
+	 
+    
     
 }
 
@@ -301,45 +315,58 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
    adc_fan_hex = Get_Adc_Average(channel,times);
 
     fan_detect_voltage  =(uint16_t)((adc_fan_hex * 3300)/4096); //amplification 1000 ,3.111V -> 3111
-	HAL_Delay(2);
+	//HAL_Delay(2);
 
-	if(fan_detect_voltage >700 &&  fan_detect_voltage < 1700){
-           detect_error_times=0;
-		  
-		   Publish_Data_Warning(fan_warning,no_warning); //don't has warning .
-		   HAL_Delay(200);
-		
-		   HAL_Delay(350);
-		   SendWifiCmd_To_Order(FAN_REMOVE_ERROR); //0xE1,
-		   run_t.fan_warning = 0;
+//	if(fan_detect_voltage >500 && fan_detect_voltage < 1700){
+//           detect_error_times=0;
+//		  
+////		   Publish_Data_Warning(fan_warning,no_warning); //don't has warning .
+////		   HAL_Delay(350);
+////		   SendWifiCmd_To_Order(FAN_REMOVE_ERROR); //0xE1,
+////		    HAL_Delay(5);
+////		  run_t.fan_warning = 0;
+////		   
+//    }
+//    else{
+
+
+  if(fan_detect_voltage < 500){
+       detect_error_times++;
+	   if(detect_error_times >2){
+	   	
+		 
+		   run_t.fan_warning = 1;
 		   
-    }
-    else{
+		
+          MqttData_Publis_SetFan(0);
+	      HAL_Delay(350);
 
-	           detect_error_times++;
-			   if(detect_error_times >3){
-			   	
-				 
-				   run_t.fan_warning = 1;
-			      
-				   Publish_Data_Warning(fan_warning,warning);
-			       HAL_Delay(350);
-			       Buzzer_KeySound();
-			       HAL_Delay(100);
-				   Buzzer_KeySound();
-			       HAL_Delay(100);
-				   Buzzer_KeySound();
-			       HAL_Delay(100);
-				   Buzzer_KeySound();
-			       HAL_Delay(100);
-				   SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
-			       HAL_Delay(10);
-				  
-				   MqttData_Publis_SetFan(0);
-			       HAL_Delay(350);
-				  
 
-			   	}
+
+
+	
+		   Publish_Data_Warning(fan_warning,warning);
+	       HAL_Delay(350);
+		 
+	    
+	       Buzzer_KeySound();
+	       HAL_Delay(100);
+		   Buzzer_KeySound();
+	       HAL_Delay(100);
+		   Buzzer_KeySound();
+	       HAL_Delay(100);
+		   Buzzer_KeySound();
+	       HAL_Delay(100);
+		   Buzzer_KeySound();	
+		   HAL_Delay(100);
+           SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
+            HAL_Delay(5);
+
+	
+
+		   Publish_Data_Warning(fan_warning,warning);
+	       HAL_Delay(350);
+		}
 	          
 
      }

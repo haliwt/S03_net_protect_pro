@@ -123,6 +123,9 @@ typedef struct _RUN_T{
 	uint8_t gFan_continueRun;
 	uint8_t gFan_counter;
 	uint8_t  gFan;
+    //ptc:
+    uint8_t ptc_first_detected_times;
+  
       
 
       uint8_t  gAi;

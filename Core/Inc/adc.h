@@ -43,7 +43,7 @@ void MX_ADC1_Init(void);
 /* USER CODE BEGIN Prototypes */
 
 
-void Judge_PTC_Temperature_Value(void);
+//void Judge_PTC_Temperature_Value(void);
 void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times);
 
 
