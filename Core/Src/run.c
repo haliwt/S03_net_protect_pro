@@ -21,6 +21,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd);
 static void Single_Command_ReceiveCmd(uint8_t cmd); 
 uint8_t tencent_cloud_flag;
 
+uint8_t first_power_on_flag ;
 
 
 
@@ -43,7 +44,8 @@ void Decode_RunCmd(void)
   
       case 'P': //power on and off
         
-           Single_Power_ReceiveCmd(cmdType_2);  
+          
+          Single_Power_ReceiveCmd(cmdType_2);  
            
       break;
       
@@ -121,9 +123,13 @@ void Decode_RunCmd(void)
 	  case 'Z' ://buzzer sound 
 	    if(run_t.gPower_flag==POWER_ON){
 
+            
+
 		    if(cmdType_2== 'Z'){//turn off AI
-		       // run_t.buzzer_sound_flag = 1;
-			    Buzzer_KeySound();
+		     
+		       Buzzer_KeySound();
+
+                
 			}
 			 
 		
@@ -144,19 +150,37 @@ void Decode_RunCmd(void)
 static void Single_Power_ReceiveCmd(uint8_t cmd)
 {
 
-   static uint8_t power_off_receive_flag;
+   static uint8_t power_off_receive_flag,power_receive_flag;
     
     switch(cmd){
 
     case 0x01: // power on
-    
-            SendWifiData_To_Cmd(0x54); //0x52= 'R'
-		    HAL_Delay(2);    //WT.EDIT 2023.06.25
-            PTC_SetHigh();
-            power_off_receive_flag=0;
-            run_t.rx_command_tag=POWER_ON;
-            Buzzer_KeySound();
-	     
+
+            if(first_power_on_flag ==0){
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+    		    HAL_Delay(2);    //WT.EDIT 2023.06.25
+                PTC_SetHigh();
+                power_off_receive_flag=0;
+                run_t.rx_command_tag=POWER_ON;
+                Buzzer_KeySound();
+    	        first_power_on_flag ++;
+
+            }
+            if(power_receive_flag ==0){
+                power_receive_flag++;
+              Buzzer_KeySound();
+
+           }
+
+            if(first_power_on_flag ==2){
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+    		    HAL_Delay(2);    //WT.EDIT 2023.06.25
+                PTC_SetHigh();
+                power_off_receive_flag=0;
+                run_t.rx_command_tag=POWER_ON;
+                Buzzer_KeySound();
+
+            }
 	  
 	    
 	cmd=0xff;  
@@ -167,7 +191,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
 
     case 0x00: //power off
 
-        
+        first_power_on_flag =2;
         SendWifiData_To_Cmd(0x53); //0x52= 'R'
 		HAL_Delay(2);    //WT.EDIT 2023.06.25
         PTC_SetLow();
