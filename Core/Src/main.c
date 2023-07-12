@@ -119,6 +119,7 @@ int main(void)
     __HAL_UART_ENABLE_IT(&huart2,UART_IT_ERR);
 	run_t.power_off_fan_state=1;
     run_t.rx_command_tag= POWER_OFF;
+  
 
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -139,9 +140,10 @@ int main(void)
     	     Tencent_Cloud_Rx_Handler();
     		 Json_Parse_Command_Fun();
     	}
+        USART1_Cmd_Error_Handler(&huart1);
+        USART2_Cmd_Error_Handler(&huart2);
    }
-   USART1_Cmd_Error_Handler(&huart1);
-   USART2_Cmd_Error_Handler(&huart2);
+   
 	
 
   }

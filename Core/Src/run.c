@@ -54,28 +54,36 @@ void Decode_RunCmd(void)
 	      if(run_t.gPower_flag==POWER_ON){
 	      if(cmdType_2==1){
               tencent_cloud_flag=0;
+              Buzzer_KeySound();
 			  SendWifiData_To_Cmd(0x52); //0x52= 'R'
-		      HAL_Delay(2);    //WT.EDIT 2023.06.25
-		      Buzzer_KeySound();
-              
 		      esp8266data.esp8266_login_cloud_success=0;
 	          run_t.wifi_config_net_lable=wifi_set_restor;
 			  run_t.gTimer_linking_tencen_counter=0;
 	          wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
+	          
+               run_t.decodeFlag =0;
           }
 		  else if(cmdType_2==0){
                 
                 Buzzer_KeySound();
+                
+              run_t.decodeFlag =0;
 		   }
 		   else if(cmdType_2==0x14){
                 run_t.gModel =2; //Timer timing of model
+                
                 Buzzer_KeySound();
+           
+                run_t.decodeFlag =0;
 		        MqttData_Publish_SetState(0x0); //Ai model->timer_time
 		        HAL_Delay(200);
+                
             }
             else if(cmdType_2==0x04){
                 run_t.gModel =1;  // AI model 
                 Buzzer_KeySound();
+            
+                run_t.decodeFlag =0;
 			    MqttData_Publish_SetState(0x1); //Ai model->beijing_time
 			    HAL_Delay(200);
             }
@@ -87,6 +95,8 @@ void Decode_RunCmd(void)
         
       case 'C':
            if(run_t.gPower_flag==POWER_ON){
+            
+              run_t.decodeFlag =0;
               Single_Command_ReceiveCmd(cmdType_2); //Single_ReceiveCmd(cmdType_2); 
               
            }
@@ -96,6 +106,8 @@ void Decode_RunCmd(void)
 
 	  case 'M':
 	  	if(run_t.gPower_flag==POWER_ON){
+             
+             run_t.decodeFlag =0;
            
              run_t.set_temperature_value = cmdType_2;
 			 if(esp8266data.esp8266_login_cloud_success==1)
@@ -128,6 +140,8 @@ void Decode_RunCmd(void)
 		    if(cmdType_2== 'Z'){//turn off AI
 		     
 		       Buzzer_KeySound();
+               
+               run_t.decodeFlag =0;
 
                 
 			}
@@ -157,28 +171,36 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
     case 0x01: // power on
 
             if(first_power_on_flag ==0){
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
-    		    HAL_Delay(2);    //WT.EDIT 2023.06.25
                 PTC_SetHigh();
+                Buzzer_KeySound();
+                run_t.decodeFlag =0;
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+    		
+               
                 power_off_receive_flag=0;
                 run_t.rx_command_tag=POWER_ON;
-                Buzzer_KeySound();
+               
     	        first_power_on_flag ++;
+                
 
             }
             if(power_receive_flag ==0){
                 power_receive_flag++;
               Buzzer_KeySound();
+              run_t.decodeFlag =0;
 
            }
 
             if(first_power_on_flag ==2){
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
-    		    HAL_Delay(2);    //WT.EDIT 2023.06.25
                 PTC_SetHigh();
+                Buzzer_KeySound();
+                run_t.decodeFlag =0;
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+                
                 power_off_receive_flag=0;
                 run_t.rx_command_tag=POWER_ON;
-                Buzzer_KeySound();
+                
+               
 
             }
 	  
@@ -190,18 +212,17 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
 	
 
     case 0x00: //power off
+        PTC_SetLow();
+        Buzzer_KeySound();
+        run_t.decodeFlag =0;
 
         first_power_on_flag =2;
         SendWifiData_To_Cmd(0x53); //0x52= 'R'
-		HAL_Delay(2);    //WT.EDIT 2023.06.25
-        PTC_SetLow();
+       
       
         run_t.rx_command_tag=POWER_OFF;
-        if(power_off_receive_flag==0){
-            power_off_receive_flag++;
-            Buzzer_KeySound();
-
-        }
+       
+        
         cmd = 0xff;
     break;
          
@@ -705,7 +726,7 @@ void RunCommand_Connect_Handler(void)
           run_t.gPower_flag = POWER_ON;
 		 run_t.gPower_On = POWER_ON;
          run_t.RunCommand_Label= POWER_ON;
-		  run_t.gModel =1;
+		 run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
 
 		 //error detected times 
@@ -716,7 +737,7 @@ void RunCommand_Connect_Handler(void)
 		 run_t.ptc_first_detected_times=0;
 
 		
-		 
+		 if( run_t.decodeFlag ==0){
 		 Update_DHT11_Value();
 		 HAL_Delay(10);
 		 if(esp8266data.esp8266_login_cloud_success==1){
@@ -733,8 +754,9 @@ void RunCommand_Connect_Handler(void)
 	         HAL_Delay(350);
 	      
 		 }
-
+         
 		 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+         }
 	    break;
 
 	   case POWER_OFF:
@@ -750,7 +772,8 @@ void RunCommand_Connect_Handler(void)
 	   break;
 
 	   case RUN_COMMAND:
-	     	RunCommand_MainBoard_Fun();
+           if( run_t.decodeFlag ==0)
+	     	 RunCommand_MainBoard_Fun();
 
 
 	   break;
