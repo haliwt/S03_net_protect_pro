@@ -90,6 +90,7 @@ typedef struct _RUN_T{
 	uint8_t process_run_guarantee_flag;
 	uint8_t usart2_error_falg ;
 	uint8_t power_off_fan_state ;
+    uint8_t wifi_run_set_restart_flag ;
 
 	
  

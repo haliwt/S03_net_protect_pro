@@ -122,6 +122,7 @@ void RunWifi_Command_Handler(void)
 				run_t.first_link_tencent_cloud_flag =1;
 				wifi_t.get_rx_beijing_time_enable=0;
 			    wifi_t.runCommand_order_lable = wifi_tencent_publish_init_data;
+                run_t.wifi_run_set_restart_flag =0;
 				
 			}
 		   }
@@ -130,8 +131,10 @@ void RunWifi_Command_Handler(void)
              if(run_t.gTimer_linking_tencen_counter < 166){
                  wifi_t.runCommand_order_lable = wifi_link_tencent_cloud;
              }
-             else
+             else{
               wifi_t.runCommand_order_lable = wifi_null;
+              run_t.wifi_run_set_restart_flag =0;
+              }
            
            }
 	    break;
@@ -140,7 +143,7 @@ void RunWifi_Command_Handler(void)
 	  	case wifi_tencent_publish_init_data://03
 		  
 				do {
-					
+			     run_t.wifi_run_set_restart_flag =0;
 				 MqttData_Publish_SetOpen(0x01);
 		         HAL_Delay(200);
 		         Publish_Data_ToTencent_Initial_Data();

@@ -52,16 +52,17 @@ void Decode_RunCmd(void)
 
 	  case 'W': //wifi-linking_tencentcloud
 	      if(run_t.gPower_flag==POWER_ON){
-	      if(cmdType_2==1){
+	      if(cmdType_2==1 && run_t.wifi_run_set_restart_flag ==0){
               tencent_cloud_flag=0;
               Buzzer_KeySound();
 			  SendWifiData_To_Cmd(0x52); //0x52= 'R'
 		      esp8266data.esp8266_login_cloud_success=0;
 	          run_t.wifi_config_net_lable=wifi_set_restor;
 			  run_t.gTimer_linking_tencen_counter=0;
+              run_t.wifi_run_set_restart_flag =1;
 	          wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
 	          
-               run_t.decodeFlag =0;
+             run_t.decodeFlag =0;
           }
 		  else if(cmdType_2==0){
                 
@@ -728,6 +729,7 @@ void RunCommand_Connect_Handler(void)
          run_t.RunCommand_Label= POWER_ON;
 		 run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
+         run_t.wifi_run_set_restart_flag =0;
 
 		 //error detected times 
 		 run_t.ptc_warning =0;
@@ -761,6 +763,7 @@ void RunCommand_Connect_Handler(void)
 
 	   case POWER_OFF:
 		  PTC_SetLow();
+           run_t.wifi_run_set_restart_flag =0;
           run_t.ptc_remove_warning_send_data =0;
 	      run_t.gPower_On=POWER_OFF;
         run_t.gPower_flag = POWER_OFF;
