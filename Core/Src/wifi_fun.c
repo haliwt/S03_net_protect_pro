@@ -156,8 +156,6 @@ void RunWifi_Command_Handler(void)
 			   
 			     sub_to_tencent_flag=0;
 				
-
-				//  run_t.rx_command_tag= POWER_ON;
 				wifi_t.runCommand_order_lable= wifi_tencent_subscription_data;
 	           
 				}while(sub_to_tencent_flag);

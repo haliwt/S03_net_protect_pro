@@ -593,6 +593,7 @@ void Json_Parse_Command_Fun(void)
 	       // run_t.RunCommand_Label=POWER_OFF;
             SendWifiCmd_To_Order(WIFI_POWER_OFF);
 			HAL_Delay(5);
+            run_t.wifi_power_on_flag=0;
 			buzzer_temp_on=0;
 	
            }
@@ -610,10 +611,10 @@ void Json_Parse_Command_Fun(void)
 		run_t.ptc_warning =0;
 		run_t.fan_warning =0;
 		run_t.ptc_remove_warning_send_data =0;
-		run_t.rx_command_tag= POWER_ON;//RUN_COMMAND;
-		//run_t.RunCommand_Label=POWER_ON;
-		SendWifiCmd_To_Order(WIFI_POWER_ON);
+		run_t.rx_command_tag= POWER_ON;
+	    SendWifiCmd_To_Order(WIFI_POWER_ON);
 		HAL_Delay(5);
+        run_t.wifi_power_on_flag =1;
 		buzzer_temp_on=0;
 		run_t.response_wifi_signal_label = 0xff;
 
@@ -843,7 +844,7 @@ void Json_Parse_Command_Fun(void)
 
    if(run_t.response_wifi_signal_label==0xff){
         
-        if(buzzer_temp_on ==0){
+        if(buzzer_temp_on ==0 &&  run_t.wifi_power_on_flag ==0){
 			buzzer_temp_on++;
    	       Buzzer_KeySound();
         }

@@ -126,7 +126,7 @@ void SetPowerOff_ForDoing(void)
 	run_t.gPlasma =0;       //"杀菌"
 	run_t.gUlransonic = 0; // "驱虫"
 	run_t.gModel =1;
-	//if(run_t.app_timer_power_off_flag==1)run_t.buzzer_sound_flag = 0;
+
 
     
 	PLASMA_SetLow(); //

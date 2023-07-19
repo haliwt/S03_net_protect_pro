@@ -158,6 +158,7 @@ typedef struct _RUN_T{
 	  uint8_t  wind_speed_decade;
 	  uint8_t  wind_speed_unit;
       uint8_t wifi_config_net_lable;
+      uint8_t wifi_power_on_flag ;
 	  //ADC
 	  uint8_t ptc_warning;
 	  uint8_t ptc_remove_warning_send_data;

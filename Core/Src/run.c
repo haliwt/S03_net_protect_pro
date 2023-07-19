@@ -399,7 +399,7 @@ void RunCommand_MainBoard_Fun(void)
    uint8_t i;
    static uint8_t fan_continuce,tm,power_on_flag;
     
-    if(run_t.buzzer_sound_flag == 1 ){
+    if(run_t.buzzer_sound_flag == 1){
 	 	run_t.buzzer_sound_flag = 0;
 	    Buzzer_KeySound();
 
