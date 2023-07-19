@@ -330,7 +330,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 //    else{
 
 
-  if(fan_detect_voltage < 500){
+  if(fan_detect_voltage < 350){ //500  now and then is bug false alarm rate  .
        detect_error_times++;
 	   if(detect_error_times >2){
 	   	
