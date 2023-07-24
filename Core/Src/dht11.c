@@ -9,6 +9,7 @@
 #define Bit_RESET 0
 #define Bit_SET   1
 
+uint8_t read_flag;
 
 static void DHT11_Mode_IPU(void);
 static void DHT11_Mode_Out_PP(void);
@@ -182,7 +183,8 @@ uint8_t DHT11_Read_TempAndHumidity(DHT11_Data_TypeDef *DHT11_Data)
 
 void static Dht11_Read_TempHumidity_Handler(DHT11_Data_TypeDef * pdth11)
 {
-	if(DHT11_Read_TempAndHumidity(pdth11) == 0){
+	read_flag =DHT11_Read_TempAndHumidity(pdth11);
+    if(read_flag == 0){
 		   
 		   run_t.gDht11_humidity = (pdth11->humi_high8bit);
 		   

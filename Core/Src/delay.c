@@ -30,7 +30,8 @@ void delay_init(uint8_t SYSCLK)
 
 //ÑÓÊ±nus
 //nus:ÒªÑÓÊ±µÄusÊý.	
-//nus:0~190887435(×î´óÖµ¼´2^32/fac_us@fac_us=22.5)	    								   
+//nus:0~190887435(×î´óÖµ¼´2^32/fac_us@fac_us=22.5)	 
+#if 0
 void delay_us(uint32_t nus)
 {		
 	uint32_t ticks;
@@ -52,51 +53,52 @@ void delay_us(uint32_t nus)
 	};
 	//delay_osschedunlock();					//»Ö¸´OSµ÷¶È											    
 }  
-//ÑÓÊ±nms
-//nms:ÒªÑÓÊ±µÄmsÊý
-//nms:0~65535
-//void delay_ms(uint16_t nms)
-//{	
-////	if(delay_osrunning&&delay_osintnesting==0)//Èç¹ûOSÒÑ¾­ÔÚÅÜÁË,²¢ÇÒ²»ÊÇÔÚÖÐ¶ÏÀïÃæ(ÖÐ¶ÏÀïÃæ²»ÄÜÈÎÎñµ÷¶È	    
-////	{		 
-////		if(nms>=fac_ms)						//ÑÓÊ±µÄÊ±¼ä´óÓÚOSµÄ×îÉÙÊ±¼äÖÜÆÚ 
-////		{ 
-////   			delay_ostimedly(nms/fac_ms);	//OSÑÓÊ±
-////		}
-////		nms%=fac_ms;						//OSÒÑ¾­ÎÞ·¨Ìá¹©ÕâÃ´Ð¡µÄÑÓÊ±ÁË,²ÉÓÃÆÕÍ¨·½Ê½ÑÓÊ±    
-////	}
-//	delay_us((uint32_t)(nms*1000));				//ÆÕÍ¨·½Ê½ÑÓÊ±
-//}
-
-
-//ÑÓÊ±nus
-//nusÎªÒªÑÓÊ±µÄusÊý.	
-//nus:0~190887435(×î´óÖµ¼´2^32/fac_us@fac_us=22.5)	 
-//void delay_us(uint32_t nus)
-//{		
-//	uint32_t ticks;
-//	uint32_t told,tnow,tcnt=0;
-//	uint32_t reload=SysTick->LOAD;				//LOADµÄÖµ	    	 
-//	ticks=nus*fac_us; 						//ÐèÒªµÄ½ÚÅÄÊý 
-//	told=SysTick->VAL;        				//¸Õ½øÈëÊ±µÄ¼ÆÊýÆ÷Öµ
-//	while(1)
-//	{
-//		tnow=SysTick->VAL;	
-//		if(tnow!=told)
-//		{	    
-//			if(tnow<told)tcnt+=told-tnow;	//ÕâÀï×¢ÒâÒ»ÏÂSYSTICKÊÇÒ»¸öµÝ¼õµÄ¼ÆÊýÆ÷¾Í¿ÉÒÔÁË.
-//			else tcnt+=reload-tnow+told;	    
-//			told=tnow;
-//			if(tcnt>=ticks)break;			//Ê±¼ä³¬¹ý/µÈÓÚÒªÑÓ³ÙµÄÊ±¼ä,ÔòÍË³ö.
-//		}  
-//	};
-//}
-
-//ÑÓÊ±nms
-//nms:ÒªÑÓÊ±µÄmsÊý
+#endif 
 void delay_ms(uint16_t nms)
 {
 	uint32_t i;
 	for(i=0;i<nms;i++) delay_us(1000);
 }
+#if 1
+void delay_us(uint32_t n)
+{
+    uint32_t ticks;
+    uint32_t told;
+    uint32_t tnow;
+    uint32_t tcnt = 0;
+    uint32_t reload;
+       
+	reload = SysTick->LOAD;                
+    ticks = n * (SystemCoreClock / 1000000);	 /* ÐèÒªµÄ½ÚÅÄÊý */  
+    
+    tcnt = 0;
+    told = SysTick->VAL;             /* ¸Õ½øÈëÊ±µÄ¼ÆÊýÆ÷Öµ */
+
+    while (1)
+    {
+        tnow = SysTick->VAL;    
+        if (tnow != told)
+        {    
+            /* SYSTICKÊÇÒ»¸öµÝ¼õµÄ¼ÆÊýÆ÷ */    
+            if (tnow < told)
+            {
+                tcnt += told - tnow;    
+            }
+            /* ÖØÐÂ×°ÔØµÝ¼õ */
+            else
+            {
+                tcnt += reload - tnow + told;    
+            }        
+            told = tnow;
+
+             /* Ê±¼ä³¬¹ý/µÈÓÚÒªÑÓ³ÙµÄÊ±¼ä,ÔòÍË³ö */
+            if (tcnt >= ticks)
+            {
+            	break;
+            }
+        }  
+    }
+} 
+
+#endif 
 

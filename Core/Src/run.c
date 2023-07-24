@@ -22,6 +22,8 @@ static void Single_Command_ReceiveCmd(uint8_t cmd);
 uint8_t tencent_cloud_flag;
 
 uint8_t first_power_on_flag ;
+uint8_t buzzer_sound;
+
 
 
 
@@ -165,47 +167,42 @@ void Decode_RunCmd(void)
 static void Single_Power_ReceiveCmd(uint8_t cmd)
 {
 
-   static uint8_t power_off_receive_flag,power_receive_flag;
+
     
     switch(cmd){
 
     case 0x01: // power on
 
-            if(first_power_on_flag ==0){
+           
                 PTC_SetHigh();
-                Buzzer_KeySound();
-                run_t.decodeFlag =0;
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
-    		
+
                
-                power_off_receive_flag=0;
+                if(buzzer_sound<=1){ 
+                    buzzer_sound++;
+                    if(buzzer_sound==2){
+                     Buzzer_KeySound();
+                        
+                    }
+                    
+                }
+                if(buzzer_sound==5)Buzzer_KeySound();
+
+                
+                run_t.decodeFlag =0;
+               
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+    		   
+                Update_DHT11_Value(); 
+               
                 run_t.rx_command_tag=POWER_ON;
                
     	        first_power_on_flag ++;
                 
 
-            }
-            if(power_receive_flag ==0){
-                power_receive_flag++;
-              Buzzer_KeySound();
-              run_t.decodeFlag =0;
-
-           }
-
-            if(first_power_on_flag ==2){
-                PTC_SetHigh();
-                Buzzer_KeySound();
-                run_t.decodeFlag =0;
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
-                
-                power_off_receive_flag=0;
-                run_t.rx_command_tag=POWER_ON;
-                
-               
-
-            }
-	  
-	    
+            
+           
+      run_t.gTimer_send_dit=60;
+	 Update_DHT11_Value(); 
 	cmd=0xff;  
      break;
 
@@ -217,7 +214,8 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
         Buzzer_KeySound();
         run_t.decodeFlag =0;
 
-        first_power_on_flag =2;
+        
+        buzzer_sound=5;
         SendWifiData_To_Cmd(0x53); //0x52= 'R'
        
       
@@ -737,6 +735,7 @@ void RunCommand_Connect_Handler(void)
 		 run_t.gTimer_ptc_adc_times=0;
 		 run_t.gTimer_fan_adc_times=0;
 		 run_t.ptc_first_detected_times=0;
+        
 
 		
 		 if( run_t.decodeFlag ==0){
