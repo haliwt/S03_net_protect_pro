@@ -21,8 +21,8 @@ static void Single_Power_ReceiveCmd(uint8_t cmd);
 static void Single_Command_ReceiveCmd(uint8_t cmd); 
 uint8_t tencent_cloud_flag;
 
-uint8_t receive_form_display_power_flag;
-uint8_t receive_form_display_power_off_flag;
+uint16_t receive_form_display_power_flag;
+uint16_t receive_form_display_power_off_flag;
 
 
 
@@ -168,7 +168,7 @@ void Decode_RunCmd(void)
 **********************************************************************/
 static void Single_Power_ReceiveCmd(uint8_t cmd)
 {
-    static uint8_t buzzer_sound,buzzer_power_Off_sound;
+    static uint8_t buzzer_power_on_sound,buzzer_power_Off_sound;
 
     
     switch(cmd){
@@ -180,9 +180,9 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
                 buzzer_power_Off_sound=0;
 
                
-                if(receive_form_display_power_flag !=buzzer_sound){ 
+                if(receive_form_display_power_flag !=buzzer_power_on_sound){ 
                    
-                   buzzer_sound = receive_form_display_power_flag ;
+                   buzzer_power_on_sound = receive_form_display_power_flag ;
                    Buzzer_KeySound();
                         
                    
@@ -215,7 +215,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
     case 0x00: //power off
         receive_form_display_power_off_flag++;
         SendWifiData_To_Cmd(0x53); //0x52= 'R'
-         buzzer_sound=0;
+         buzzer_power_on_sound=0;
         if(receive_form_display_power_off_flag !=buzzer_power_Off_sound){
             buzzer_power_Off_sound= receive_form_display_power_off_flag;
         Buzzer_KeySound();
