@@ -21,7 +21,8 @@ static void Single_Power_ReceiveCmd(uint8_t cmd);
 static void Single_Command_ReceiveCmd(uint8_t cmd); 
 uint8_t tencent_cloud_flag;
 
-
+uint8_t receive_form_display_power_flag;
+uint8_t receive_form_display_power_off_flag;
 
 
 
@@ -173,26 +174,26 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
     switch(cmd){
 
     case 0x01: // power on
-
-           
+                receive_form_display_power_flag++;
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
               
                 buzzer_power_Off_sound=0;
 
                
-                if(buzzer_sound==0){ 
-                    buzzer_sound++;
-                  
+                if(receive_form_display_power_flag !=buzzer_sound){ 
+                   
+                   buzzer_sound = receive_form_display_power_flag ;
                    Buzzer_KeySound();
                         
                    
                     
                 }
-              //  if(buzzer_sound==5)Buzzer_KeySound();
+                SendWifiData_To_Cmd(0x54); //0x52= 'R'
 
                 
                 run_t.decodeFlag =0;
                
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+               
     		    PTC_SetHigh();
                 Update_DHT11_Value(); 
                
@@ -212,19 +213,20 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
 	
 
     case 0x00: //power off
-
+        receive_form_display_power_off_flag++;
+        SendWifiData_To_Cmd(0x53); //0x52= 'R'
          buzzer_sound=0;
-        if(buzzer_power_Off_sound==0){
-            buzzer_power_Off_sound++;
+        if(receive_form_display_power_off_flag !=buzzer_power_Off_sound){
+            buzzer_power_Off_sound= receive_form_display_power_off_flag;
         Buzzer_KeySound();
-        HAL_Delay(100);
+     
 
         }
         run_t.decodeFlag =0;
 
-        
-       
         SendWifiData_To_Cmd(0x53); //0x52= 'R'
+       
+       
         PTC_SetLow();
       
         run_t.rx_command_tag=POWER_OFF;
