@@ -452,7 +452,7 @@ void RunCommand_MainBoard_Fun(void)
 
         }
 
-        if(run_t.gTimer_run_power_on >1 && power_off_step ==1 && run_t.ptc_remove_warning_send_data ==0){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==1 && run_t.ptc_remove_warning_send_data ==0){
            power_off_step ++;
 
            Publish_Data_Warning(ptc_temp_warning,0);
@@ -461,7 +461,7 @@ void RunCommand_MainBoard_Fun(void)
 	     //HAL_Delay(200);
         }
 
-        if(run_t.gTimer_run_power_on >1 && power_off_step ==2 && run_t.ptc_remove_warning_send_data ==0){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==2 && run_t.ptc_remove_warning_send_data ==0){
              power_off_step ++;
         
              Publish_Data_Warning(fan_warning,0);
@@ -470,7 +470,7 @@ void RunCommand_MainBoard_Fun(void)
                  //HAL_Delay(200);
         }
 
-        if(run_t.gTimer_run_power_on >1 && power_off_step ==3){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==3){
            power_off_step++;
 
            Subscriber_Data_FromCloud_Handler();
@@ -479,7 +479,7 @@ void RunCommand_MainBoard_Fun(void)
 
         }
 
-        if(run_t.gTimer_run_power_on >1 && power_off_step ==4){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==4){
 
        
        
@@ -606,10 +606,6 @@ void RunCommand_MainBoard_Fun(void)
 
      }
      
-    
-
-
-	
     break;
 
 	case FAN_CONTINUCE_RUN_ONE_MINUTE: //7

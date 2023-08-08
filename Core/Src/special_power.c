@@ -152,7 +152,7 @@ void SetPowerOff_ForDoing(void)
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);//ultrasnoic Off 
 	PTC_SetLow();
 	FAN_Stop();
-	HAL_Delay(10);
+
 
 }
 
