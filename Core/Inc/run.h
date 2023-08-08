@@ -91,7 +91,8 @@ typedef struct _RUN_T{
 	uint8_t usart2_error_falg ;
 	uint8_t power_off_fan_state ;
     uint8_t wifi_run_set_restart_flag ;
-
+    //process run on 
+    uint8_t run_power_on_step;
 	
  
 
@@ -142,6 +143,7 @@ typedef struct _RUN_T{
 	  uint8_t send_link_cloud_times;
 	  //wifi link ref
 	  uint8_t first_link_tencent_cloud_flag ;
+      uint8_t gTimer_run_power_on;
 	
 	  uint8_t noBuzzer_sound_dry_flag;
 	  

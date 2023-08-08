@@ -194,9 +194,10 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
                 run_t.decodeFlag =0;
                
                
-    		    PTC_SetHigh();
+    		 //   PTC_SetHigh();
                 Update_DHT11_Value(); 
-               
+                run_t.run_power_on_step=0;
+             
                 run_t.rx_command_tag=POWER_ON;
                
     	     
@@ -218,7 +219,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
          buzzer_power_on_sound=0;
         if(receive_form_display_power_off_flag !=buzzer_power_Off_sound){
             buzzer_power_Off_sound= receive_form_display_power_off_flag;
-        Buzzer_KeySound();
+            Buzzer_KeySound();
      
 
         }
@@ -762,15 +763,34 @@ void RunCommand_Connect_Handler(void)
              run_t.wifi_gPower_On=1;
 	        run_t.ptc_remove_warning_send_data =0;
 
-			 MqttData_Publish_SetOpen(1);  
-				HAL_Delay(200);
-			 MqttData_Publish_Update_Data();//MqttData_Publish_SetOpen(1);  //MqttData_Publish_SetOpen(0x01);
-	         HAL_Delay(350);
+            
+             if(run_t.run_power_on_step == 0){
+                run_t.run_power_on_step++;
+			    MqttData_Publish_SetOpen(1);  
+				//HAL_Delay(200);
+              }
+             if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 1){
+                  run_t.run_power_on_step++;
+			      MqttData_Publish_Update_Data();//MqttData_Publish_SetOpen(1);  //MqttData_Publish_SetOpen(0x01);
+                  run_t.gTimer_run_power_on=0;
+             }
+             
+             if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>3 ){
+
+                   run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+
+
+             }
+	       
 	      
 		 }
-         
-		 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+         else{
+            run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
          }
+         
+		
+         }
+         
 	    break;
 
 	   case POWER_OFF:
