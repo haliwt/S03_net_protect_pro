@@ -389,7 +389,7 @@ void SystemReset(void)
 void RunCommand_MainBoard_Fun(void)
 {
    uint8_t i;
-   static uint8_t fan_continuce,tm,power_on_flag;
+   static uint8_t fan_continuce,update_step;
     
     if(run_t.buzzer_sound_flag == 1){
 	 	run_t.buzzer_sound_flag = 0;
@@ -416,8 +416,8 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.gTimer_ptc_adc_times=0;
 		 run_t.gTimer_fan_adc_times=0;
 		 run_t.ptc_first_detected_times=0;
-		 
-	    power_on_flag=0;
+		 update_step=0;
+	  
 	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
 	   
     
@@ -426,7 +426,7 @@ void RunCommand_MainBoard_Fun(void)
     case POWER_OFF: //2
      
        
-	     run_t.gPower_On=POWER_OFF;
+	    run_t.gPower_On=POWER_OFF;
         run_t.gPower_flag = POWER_OFF;
         run_t.RunCommand_Label = POWER_OFF;
 		 run_t.set_wind_speed_value=10;
@@ -444,7 +444,7 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.gTimer_fan_adc_times=0;
 		 run_t.ptc_first_detected_times=0;
 		
-		fan_continuce =0;
+	
         if(power_off_step ==0){
            power_off_step++; 
             MqttData_Publish_PowerOff_Ref(); 
@@ -505,12 +505,23 @@ void RunCommand_MainBoard_Fun(void)
 
    case UPDATE_TO_PANEL_DATA: //5
 
-      if(power_on_flag ==0){
-	  	power_on_flag++;
+      if(update_step ==0){
+	  	update_step++;
     	Subscriber_Data_FromCloud_Handler();
-		HAL_Delay(350);
+        run_t.gTimer_run_power_on=0;
+       }
 
-      	}
+      if(update_step==1 && run_t.gTimer_run_power_on >0){
+
+         update_step++;
+         run_t.gTimer_senddata_panel=0;
+         run_t.gTimer_ptc_adc_times =0;
+         run_t.gTimer_fan_adc_times=0;
+         run_t.gTimer_send_dit=0;
+         run_t.gTimer_run_power_on =0;
+      }
+		
+
 
      switch(run_t.interval_time_stop_run){
 
@@ -550,26 +561,49 @@ void RunCommand_MainBoard_Fun(void)
 		}
 	
        if(run_t.first_link_tencent_cloud_flag ==1){
-	
-		  run_t.first_link_tencent_cloud_flag++;
-			MqttData_Publish_SetOpen(0x01);
-			HAL_Delay(100);
-			Publish_Data_ToTencent_Initial_Data();
-			HAL_Delay(350);
-	
-		   Subscriber_Data_FromCloud_Handler();
-		   HAL_Delay(350);
-	   }
+
+           if(update_step==2){
+              update_step++;
+
+              MqttData_Publish_SetOpen(0x01);
+              run_t.gTimer_run_power_on =0;
+
+           }
+
+           if(run_t.gTimer_run_power_on >0 && update_step==3){
+                 update_step ++;
+
+                 Publish_Data_ToTencent_Initial_Data();
+           
+                 run_t.gTimer_run_power_on =0;
+
+
+           }
+
+            if(run_t.gTimer_run_power_on >0 && update_step==4){
+                 update_step ++;
+                 Subscriber_Data_FromCloud_Handler();
+                run_t.gTimer_run_power_on =0;
+
+
+             }
+            
+             if(run_t.gTimer_run_power_on >0 && update_step==5){
+                          update_step ++;
+                run_t.first_link_tencent_cloud_flag++;
+
+              }
+			}
     
 
-	if(run_t.gTimer_continuce_works_time > 7200){//if(run_t.gTimer_continuce_works_time > 600){
-	
-	     run_t.gTimer_continuce_works_time =0;
-         run_t.interval_time_stop_run =1;
-	     run_t.gFan_continueRun =1;
-		 run_t.gFan_counter=0;
-    }
-    
+        if(run_t.gTimer_continuce_works_time > 7200){
+        
+             run_t.gTimer_continuce_works_time =0;
+             run_t.interval_time_stop_run =1;
+             run_t.gFan_continueRun =1;
+             run_t.gFan_counter=0;
+        }
+     
 	 break;
 
 	 case 1:  //interval times 10 minutes,stop works
@@ -627,13 +661,10 @@ void RunCommand_MainBoard_Fun(void)
            }       
            else{
 		           
-				   run_t.gFan_counter=0;
+				  run_t.gFan_counter=0;
 				  run_t.RunCommand_Label = POWER_NULL;
-			      
-				   FAN_Stop();
-                   if(fan_continuce == 0){
-		 	         fan_continuce ++;
-			       }
+			      FAN_Stop();
+                 
 				  
 	         }
 	  
@@ -738,7 +769,7 @@ void RunCommand_Connect_Handler(void)
      switch(run_t.rx_command_tag){
 
         case POWER_ON:
-		   PTC_SetHigh();
+		 //  PTC_SetHigh();
           run_t.gPower_flag = POWER_ON;
 		 run_t.gPower_On = POWER_ON;
          run_t.RunCommand_Label= POWER_ON;
@@ -772,18 +803,17 @@ void RunCommand_Connect_Handler(void)
                 run_t.run_power_on_step++;
 			    MqttData_Publish_SetOpen(1);  
 				//HAL_Delay(200);
+				run_t.gTimer_run_power_on=0;
               }
-             if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 1){
+             if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0){
                   run_t.run_power_on_step++;
-			      MqttData_Publish_Update_Data();//MqttData_Publish_SetOpen(1);  //MqttData_Publish_SetOpen(0x01);
+			       MqttData_Publish_Init();
                   run_t.gTimer_run_power_on=0;
              }
              
-             if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>3 ){
+             if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 ){
 
                    run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
-
-
              }
 	       
 	      
