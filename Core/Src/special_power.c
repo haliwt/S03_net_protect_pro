@@ -28,8 +28,8 @@ void SetPowerOn_ForDoing(void)
 	run_t.wifi_gPower_On = 1;
 
 
-	switch(run_t.app_timer_power_on_flag){
-	case 0:
+	if(run_t.app_timer_power_on_flag==0){
+	
         run_t.gModel=1;
 	    run_t.gFan = 1;
 		run_t.gDry = 1;
@@ -37,70 +37,69 @@ void SetPowerOn_ForDoing(void)
 		run_t.gUlransonic = 1; // "驱虫"
 	    run_t.gFan_counter=0;
 
-
-   break;
-
-	case 1: //app timer timing power of 
-	       run_t.gModel =1;
-		  
-
-	       Parse_Json_Statement();
-
-	  
-		    if( run_t.gPlasma==1){ //Anion
-				run_t.gPlasma=1;
-
-				SendWifiCmd_To_Order(WIFI_KILL_ON);
-				HAL_Delay(2);
-			}
-			else{
-				run_t.gPlasma =0;
-				SendWifiCmd_To_Order(WIFI_KILL_OFF);
-				HAL_Delay(2);
-			}
-
-
-			if(run_t.gUlransonic==1){
-
-					SendWifiCmd_To_Order(WIFI_SONIC_ON);
-					HAL_Delay(2);
-			}
-			else {
-					run_t.gUlransonic=0;
-					SendWifiCmd_To_Order(WIFI_SONIC_OFF);
-					HAL_Delay(2);
-			}
-
-
-
-			if(run_t.gDry==1){
-
-				SendWifiCmd_To_Order(WIFI_PTC_ON);
-				HAL_Delay(2);
-			}
-			else{
-					run_t.gDry=0;
-					SendWifiCmd_To_Order(WIFI_PTC_OFF);
-					HAL_Delay(2);
-
-			}
-		 
-			 HAL_Delay(100);
-
-		     run_t.set_wind_speed_value =100;
-			 run_t.wifi_gPower_On=1;
-		     MqttData_Publish_Update_Data();
-		     HAL_Delay(200);
-
-			
-	     break;
-		}
-			
-        
-
+       }
+  
 
 	
  }
+
+void Tencen_Cloud_Timer_Power_On(void)
+{
+    
+               run_t.gModel =1;
+            
+    
+             Parse_Json_Statement();
+    
+        
+              if( run_t.gPlasma==1){ //Anion
+                  run_t.gPlasma=1;
+    
+                  SendWifiCmd_To_Order(WIFI_KILL_ON);
+                  HAL_Delay(2);
+              }
+              else{
+                  run_t.gPlasma =0;
+                  SendWifiCmd_To_Order(WIFI_KILL_OFF);
+                  HAL_Delay(2);
+              }
+    
+    
+              if(run_t.gUlransonic==1){
+    
+                      SendWifiCmd_To_Order(WIFI_SONIC_ON);
+                      HAL_Delay(2);
+              }
+              else {
+                      run_t.gUlransonic=0;
+                      SendWifiCmd_To_Order(WIFI_SONIC_OFF);
+                      HAL_Delay(2);
+              }
+    
+    
+    
+              if(run_t.gDry==1){
+    
+                  SendWifiCmd_To_Order(WIFI_PTC_ON);
+                  HAL_Delay(2);
+              }
+              else{
+                      run_t.gDry=0;
+                      SendWifiCmd_To_Order(WIFI_PTC_OFF);
+                      HAL_Delay(2);
+    
+              }
+           
+        
+    
+               run_t.set_wind_speed_value =100;
+               run_t.wifi_gPower_On=1;
+
+               run_t.run_power_on_step++;
+             
+
+
+}
 
 void SetPowerOff_ForDoing(void)
 {

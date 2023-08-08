@@ -401,7 +401,6 @@ void RunCommand_MainBoard_Fun(void)
 
 	case POWER_ON: //1
 	     
-		 SetPowerOn_ForDoing();
 	     run_t.gPower_On=POWER_ON;
          run_t.gTimer_send_dit=0;
 	     run_t.gTimer_senddata_panel=0;
@@ -416,7 +415,18 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.gTimer_ptc_adc_times=0;
 		 run_t.gTimer_fan_adc_times=0;
 		 run_t.ptc_first_detected_times=0;
-		 update_step=0;
+
+       if(run_t.app_timer_power_on_flag==0){
+	
+        run_t.gModel=1;
+	    run_t.gFan = 1;
+		run_t.gDry = 1;
+		run_t.gPlasma =1;       //"杀菌"
+		run_t.gUlransonic = 1; // "驱虫"
+	    run_t.gFan_counter=0;
+
+       }
+		update_step=0;
 	  
 	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
 	   
@@ -810,8 +820,10 @@ void RunCommand_Connect_Handler(void)
 			       MqttData_Publish_Init();
                   run_t.gTimer_run_power_on=0;
              }
-             else if(run_t.run_power_on_step !=2 && run_t.gTimer_run_power_on > 1){
-                 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+             else if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0){
+                 
+                Tencen_Cloud_Timer_Power_On();
+                 run_t.gTimer_run_power_on=0;
 
 
              }
@@ -842,6 +854,7 @@ void RunCommand_Connect_Handler(void)
 		 run_t.set_wind_speed_value=10;
 		 run_t.gModel =1;
           esp8266_t.login_steps_tag=0;
+          run_t.run_power_on_step=0;
 	
          run_t.rx_command_tag= RUN_COMMAND;
 	   break;

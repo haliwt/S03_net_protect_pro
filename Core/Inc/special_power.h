@@ -11,5 +11,6 @@ void SetPowerOff_ForDoing(void);
 
 void ActionEvent_Handler(void);
 
+void Tencen_Cloud_Timer_Power_On(void);
 
 #endif 
