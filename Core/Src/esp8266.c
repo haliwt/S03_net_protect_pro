@@ -167,14 +167,14 @@ void Wifi_SoftAP_Config_Handler(void)
 	
 
 
-	 case wifi_set_tcdevreg://dynamic register
+	 case wifi_set_tcdevreg://4 dynamic register
 	  if(esp8266_t.login_steps_tag ==3){
          esp8266_t.login_steps_tag++;
 		 HAL_UART_Transmit(&huart2, "AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"), 0xffff); //动态注册
 		 run_t.gTimer_login_times=0;
 
        }      
-		if(run_t.gTimer_login_times > 4){
+		if(run_t.gTimer_login_times > 3){
             run_t.gTimer_login_times=0;
             run_t.wifi_config_net_lable=wifi_set_tcsap;
 
@@ -191,7 +191,7 @@ void Wifi_SoftAP_Config_Handler(void)
 
             }
 
-           if(run_t.gTimer_login_times < 5 && esp8266_t.login_steps_tag ==5){
+           if(run_t.gTimer_login_times < 2 && esp8266_t.login_steps_tag ==5){
                run_t.gTimer_login_two_times=0;
 	 
           

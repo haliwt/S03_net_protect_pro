@@ -12,11 +12,15 @@
 
 #include "mqtt_iot.h"
 
+
+uint8_t power_on_doing_step;
+
 void (*Single_Usart_ReceiveData)(uint8_t cmd);
 
 void SetPowerOn_ForDoing(void)
 {
     
+
     run_t.gPower_flag = POWER_ON;
     run_t.gFan_continueRun =0;
     run_t.gPower_On=POWER_ON;
@@ -32,21 +36,36 @@ void SetPowerOn_ForDoing(void)
 		run_t.gPlasma =1;       //"杀菌"
 		run_t.gUlransonic = 1; // "驱虫"
 	    run_t.gFan_counter=0;
-    
-		   MqttData_Publish_SetOpen(1);  
-			HAL_Delay(200);
+          if(power_on_doing_step==0){
+            power_on_doing_step++;
+		    MqttData_Publish_SetOpen(1);  
+            run_t.gTimer_run_power_on =0;
+
+         }
+
+          if(run_t.gTimer_run_power_on > 1 && power_on_doing_step==1 ){
+			power_on_doing_step++;
 		     Update_DHT11_Value();
-			 HAL_Delay(200);
+             run_t.gTimer_run_power_on =0;
+
+         }
+
+         if(run_t.gTimer_run_power_on > 1 && power_on_doing_step==2){
+			power_on_doing_step++;
 	         run_t.set_wind_speed_value =100;
 			run_t.wifi_gPower_On=1;
 			MqttData_Publish_Update_Data();
-			 HAL_Delay(200);
-       	
-			
-	    Fan_RunSpeed_Fun();//FAN_CCW_RUN();
-	    PLASMA_SetHigh(); //
-	    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
-	    PTC_SetHigh();
+            run_t.gTimer_run_power_on=0;
+         }
+         
+        if(run_t.gTimer_run_power_on > 1 && power_on_doing_step==3){
+            power_on_doing_step++;
+
+            Fan_RunSpeed_Fun();//FAN_CCW_RUN();
+	        PLASMA_SetHigh(); //
+	       HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
+	       PTC_SetHigh();
+        }
   
 	break;
 
@@ -126,7 +145,7 @@ void SetPowerOff_ForDoing(void)
 	run_t.gPlasma =0;       //"杀菌"
 	run_t.gUlransonic = 0; // "驱虫"
 	run_t.gModel =1;
-
+    power_on_doing_step=0;
 
     
 	PLASMA_SetLow(); //
