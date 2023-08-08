@@ -24,6 +24,7 @@ uint8_t tencent_cloud_flag;
 uint16_t receive_form_display_power_flag;
 uint16_t receive_form_display_power_off_flag;
 
+uint8_t power_off_step;
 
 
 
@@ -408,6 +409,7 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.app_timer_power_off_flag =0;
 		 run_t.gTimer_continuce_works_time=0;
           esp8266_t.login_steps_tag=0;
+          power_off_step=0;
 		 //error detected times 
 		 run_t.ptc_warning =0;
 		 run_t.fan_warning =0;
@@ -443,25 +445,49 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.ptc_first_detected_times=0;
 		
 		fan_continuce =0;
+        if(power_off_step ==0){
+           power_off_step++; 
+            MqttData_Publish_PowerOff_Ref(); 
+           run_t.gTimer_run_power_on =0;
 
-        MqttData_Publish_PowerOff_Ref(); 
-	    HAL_Delay(200);
-
-        if( run_t.ptc_remove_warning_send_data ==0){
-		 	run_t.ptc_remove_warning_send_data++;
-		  	Publish_Data_Warning(ptc_temp_warning,0);
-		  	HAL_Delay(200);
-			Publish_Data_Warning(fan_warning,0);
-			HAL_Delay(200);
-			
         }
+
+        if(run_t.gTimer_run_power_on >1 && power_off_step ==1 && run_t.ptc_remove_warning_send_data ==0){
+           power_off_step ++;
+
+           Publish_Data_Warning(ptc_temp_warning,0);
+           run_t.gTimer_run_power_on =0;
+
+	     //HAL_Delay(200);
+        }
+
+        if(run_t.gTimer_run_power_on >1 && power_off_step ==2 && run_t.ptc_remove_warning_send_data ==0){
+             power_off_step ++;
+        
+             Publish_Data_Warning(fan_warning,0);
+             run_t.gTimer_run_power_on =0;
+        
+                 //HAL_Delay(200);
+        }
+
+        if(run_t.gTimer_run_power_on >1 && power_off_step ==3){
+           power_off_step++;
+
+           Subscriber_Data_FromCloud_Handler();
+           // HAL_Delay(200);
+            run_t.gTimer_run_power_on =0;
+
+        }
+
+        if(run_t.gTimer_run_power_on >1 && power_off_step ==4){
+
        
-         run_t.gFan_counter=0;
+       
+        run_t.gFan_counter=0;
 	    run_t.RunCommand_Label = FAN_CONTINUCE_RUN_ONE_MINUTE;
 
-		Subscriber_Data_FromCloud_Handler();
-		HAL_Delay(200);
-		 
+	
+       }
          
        if(run_t.app_timer_power_off_flag==1){ 
          	run_t.app_timer_power_off_flag=0;
@@ -471,7 +497,7 @@ void RunCommand_MainBoard_Fun(void)
 
 		}
 
-	     SetPowerOff_ForDoing();
+	   SetPowerOff_ForDoing();
 	  
       
 	break;
