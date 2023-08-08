@@ -29,19 +29,14 @@ void SetPowerOn_ForDoing(void)
 
 
 	switch(run_t.app_timer_power_on_flag){
-		case 0:
+	case 0:
         run_t.gModel=1;
 	    run_t.gFan = 1;
 		run_t.gDry = 1;
 		run_t.gPlasma =1;       //"杀菌"
 		run_t.gUlransonic = 1; // "驱虫"
 	    run_t.gFan_counter=0;
-//          if(power_on_doing_step==0){
-//            power_on_doing_step++;
-//		    MqttData_Publish_SetOpen(1);  
-//            run_t.gTimer_run_power_on =0;
-//
-//         }
+
 
    break;
 

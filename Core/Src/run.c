@@ -452,7 +452,7 @@ void RunCommand_MainBoard_Fun(void)
 
         }
 
-        if(run_t.gTimer_run_power_on >0 && power_off_step ==1 && run_t.ptc_remove_warning_send_data ==0){
+        if(run_t.gTimer_run_power_on >1 && power_off_step ==1 && run_t.ptc_remove_warning_send_data ==0){
            power_off_step ++;
 
            Publish_Data_Warning(ptc_temp_warning,0);
@@ -802,13 +802,18 @@ void RunCommand_Connect_Handler(void)
              if(run_t.run_power_on_step == 0){
                 run_t.run_power_on_step++;
 			    MqttData_Publish_SetOpen(1);  
-				//HAL_Delay(200);
 				run_t.gTimer_run_power_on=0;
               }
-             if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0){
+             
+             if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0 && run_t.app_timer_power_on_flag==0){
                   run_t.run_power_on_step++;
 			       MqttData_Publish_Init();
                   run_t.gTimer_run_power_on=0;
+             }
+             else if(run_t.run_power_on_step !=2 && run_t.gTimer_run_power_on > 1){
+                 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+
+
              }
              
              if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 ){
