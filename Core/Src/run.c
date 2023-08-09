@@ -805,9 +805,7 @@ void RunCommand_Connect_Handler(void)
 		 if( run_t.decodeFlag ==0){
 		 Update_DHT11_Value();
 		 if(esp8266_t.esp8266_login_cloud_success==1){
-		 	 run_t.gUlransonic =1;
-			 run_t.gPlasma =1;
-		     run_t.gDry =1;
+		 	
 			 run_t.set_wind_speed_value=100;
      
 	        run_t.ptc_remove_warning_send_data =0;
@@ -827,6 +825,9 @@ void RunCommand_Connect_Handler(void)
                     switch(run_t.run_power_on_step){
 
                     case 1:
+                         run_t.gUlransonic =1;
+            			 run_t.gPlasma =1;
+            		     run_t.gDry =1;
                         if(run_t.gTimer_run_power_on>0){
                         MqttData_Publish_Init();
                        
@@ -895,7 +896,7 @@ void RunCommand_Connect_Handler(void)
                             
                           run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
                           run_t.RunCommand_Label = POWER_ON;
-                           run_t.run_power_on_step =0xff;
+                           run_t.run_power_on_step =0xfe;
 
                         }
 
@@ -913,6 +914,9 @@ void RunCommand_Connect_Handler(void)
 	      
           }
          else{
+             run_t.gUlransonic =1;
+			 run_t.gPlasma =1;
+		     run_t.gDry =1;
             run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
          }
          
