@@ -821,36 +821,68 @@ void RunCommand_Connect_Handler(void)
                   run_t.gTimer_run_power_on=0;
              }
              else if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0){
-                 
-                Tencen_Cloud_Timer_Power_On();
-                 run_t.gTimer_run_power_on=0;
+                 run_t.run_power_on_step++;
+                do{
+                   Tencen_Cloud_Timer_Power_On();
+                   
+
+                }while(run_t.run_power_on_step==2);
+                run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                
+                  if(run_t.gDry==1){
+        
+                      SendWifiCmd_To_Order(WIFI_PTC_ON);
+                      HAL_Delay(1);
+                  }
+                  else{
+                          run_t.gDry=0;
+                          SendWifiCmd_To_Order(WIFI_PTC_OFF);
+                          HAL_Delay(1);
+        
+                  }
+                
+                run_t.gTimer_run_power_on=0;
+               
 
 
              }
 
              
-            if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 && run_t.app_timer_power_on_flag==0 ){
+            if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>0 && run_t.app_timer_power_on_flag==0 ){
 
-                    MqttData_Publis_SetFan(run_t.set_wind_speed_value);
-                    run_t.run_power_on_step++;
-                   run_t.gTimer_run_power_on=0;
+                   
+                  run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                  
             }
-            else if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 ){
+            else if(run_t.run_power_on_step==3 && run_t.gTimer_run_power_on>0){
+                 run_t.run_power_on_step++;
 
+                 run_t.set_wind_speed_value=100;
 
-
-                 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                 MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+                 run_t.run_power_on_step =0;
+  
+                 
              }
 
 
-            if(run_t.run_power_on_step==3 && run_t.gTimer_run_power_on>1){
+            if(run_t.run_power_on_step==4 && run_t.gTimer_run_power_on>0){
 
+                 run_t.run_power_on_step++;
 
                  MqttData_Publis_SetTemp(40);
+                 run_t.gTimer_run_power_on=0;
+             }
+
+
+           if(run_t.run_power_on_step==5 && run_t.gTimer_run_power_on>0){
+
+                 run_t.run_power_on_step++;
+               
                  run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
 
-
-            }
+             }
+            
 	       
 	      
 		 }

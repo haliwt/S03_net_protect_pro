@@ -49,7 +49,7 @@ void Tencen_Cloud_Timer_Power_On(void)
                run_t.gModel =1;
             
     
-             Parse_Json_Statement();
+              Parse_Json_Statement();
     
         
               if( run_t.gPlasma==1){ //Anion
@@ -94,10 +94,7 @@ void Tencen_Cloud_Timer_Power_On(void)
              
                run_t.set_wind_speed_value =100;
                run_t.wifi_gPower_On=1;
-
                run_t.run_power_on_step++;
-             
-
 
 }
 
