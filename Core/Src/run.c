@@ -426,6 +426,11 @@ void RunCommand_MainBoard_Fun(void)
 	    run_t.gFan_counter=0;
 
        }
+       else{
+         MqttData_Publis_SetTemp(40);
+
+
+       }
       
 		update_step=0;
 	  
@@ -485,7 +490,6 @@ void RunCommand_MainBoard_Fun(void)
            power_off_step++;
 
            Subscriber_Data_FromCloud_Handler();
-           // HAL_Delay(200);
             run_t.gTimer_run_power_on =0;
 
         }
@@ -527,6 +531,7 @@ void RunCommand_MainBoard_Fun(void)
       if(update_step==1 && run_t.gTimer_run_power_on >0){
 
          update_step++;
+          MqttData_Publis_SetTemp(40);
          run_t.gTimer_senddata_panel=0;
          run_t.gTimer_ptc_adc_times =0;
          run_t.gTimer_fan_adc_times=0;

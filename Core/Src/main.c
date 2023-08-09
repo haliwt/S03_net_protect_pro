@@ -134,9 +134,6 @@ int main(void)
     if( run_t.decodeFlag ==0){
 	
     	RunCommand_Connect_Handler();
-
-        
-    	
         RunWifi_Command_Handler();
     
         if(wifi_t.get_rx_beijing_time_enable==0){

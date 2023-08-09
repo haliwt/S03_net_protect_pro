@@ -90,7 +90,7 @@ void Tencen_Cloud_Timer_Power_On(void)
               }
            
         
-             
+               run_t.set_temperature_value=40;
                run_t.set_wind_speed_value =100;
            
               
