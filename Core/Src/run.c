@@ -725,43 +725,61 @@ void RunCommand_MainBoard_Fun(void)
 **********************************************************************/
 void MainBoard_Self_Inspection_PowerOn_Fun(void)
 {
-    static uint8_t self_power_on_flag=0,send_power_off_flag=0;
+    static uint8_t self_power_on_flag=0,send_power_off_flag=0,power_on_first;
     
 
 	if(self_power_on_flag==0){
-        self_power_on_flag ++ ;
-	
-        Buzzer_KeySound();
+      
+	    if(power_on_first ==0){
+           power_on_first++; 
+           Buzzer_KeySound();
+        }
+        if(power_on_first==1){
+            power_on_first++;
+		   InitWifiModule_Hardware();//InitWifiModule();
+		   run_t.gTimer_run_power_on =0;
+           run_t.gTimer_login_times=0;
+        }
+		//HAL_Delay(1000);
+		if( run_t.gTimer_run_power_on >0 &&  power_on_first==2 ){
+            power_on_first++;
+            SmartPhone_TryToLink_TencentCloud();
+              run_t.gTimer_ptc_adc_times=0;
+             run_t.gTimer_run_power_on =0;
 
-    
-		InitWifiModule_Hardware();//InitWifiModule();
-		HAL_Delay(1000);
-        SmartPhone_TryToLink_TencentCloud();
-         run_t.gTimer_ptc_adc_times=0;
-		if(esp8266_t.esp8266_login_cloud_success==1){
+       }
+
+       
+		if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gTimer_run_power_on> 2 && power_on_first==3 ){
 			
-			
+			power_on_first++;
 			wifi_t.runCommand_order_lable= wifi_tencent_subscription_data;//04
 	
 
 			SendWifiData_To_Cmd(0x01) ;
-            HAL_Delay(5);
-			
+            HAL_Delay(2);
+			self_power_on_flag ++ ;
 
 			
 		}
-       run_t.gTimer_ptc_adc_times=0;
-    }
+        else if(run_t.gTimer_run_power_on> 3 && power_on_first==3){
+            power_on_first++;
+             self_power_on_flag ++ ;
 
-	 if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gPower_On  !=POWER_ON ){
+
+        }
+       run_t.gTimer_ptc_adc_times=0;
+      
+    }
+    
+	 if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gPower_On  !=POWER_ON && power_on_first==4){
        
+            power_on_first++;
            if(send_power_off_flag==0){
             send_power_off_flag++;
-		    //run_t.RunCommand_Label=POWER_OFF;
 		    run_t.rx_command_tag= POWER_OFF;
-			//wifi_t.runCommand_order_lable = wifi_publish_update_tencent_cloud_data
 			SendWifiData_To_Cmd(0x01) ;
-			HAL_Delay(50);
+			HAL_Delay(2);
                
            }
    			

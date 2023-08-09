@@ -62,12 +62,10 @@ void InitWifiModule(void)
 
 void InitWifiModule_Hardware(void)
 {
-	//WIFI_IC_DISABLE();
-	//HAL_Delay(1000);
+	
 	WIFI_IC_ENABLE();
 	at_send_data("AT+RESTORE\r\n", strlen("AT+RESTORE\r\n"));
-	HAL_Delay(1000);
-			//at_send_data("AT+RESTORE\r\n", strlen("AT+RESTORE\r\n"));
+	
 		
 }
 
@@ -328,9 +326,7 @@ void SmartPhone_TryToLink_TencentCloud(void)
     HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//开始连接
 	if(run_t.gTimer_login_times > 3){
          run_t.gTimer_login_times =0;
-//	HAL_Delay(1000);
-//    HAL_Delay(1000);
-//	HAL_Delay(1000);
+
 
     }
 	   
