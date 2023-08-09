@@ -64,7 +64,7 @@ void Decode_RunCmd(void)
 	          run_t.wifi_config_net_lable=wifi_set_restor;
 			  run_t.gTimer_linking_tencen_counter=0;
               run_t.wifi_run_set_restart_flag =1;
-              run_t.gTimer_login_two_times=0; //WT.EDIT 223.08.05
+           
 	          wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
 	          
              run_t.decodeFlag =0;
@@ -426,11 +426,7 @@ void RunCommand_MainBoard_Fun(void)
 	    run_t.gFan_counter=0;
 
        }
-       else{
-         MqttData_Publis_SetTemp(40);
-
-
-       }
+      
       
 		update_step=0;
 	  
@@ -531,7 +527,6 @@ void RunCommand_MainBoard_Fun(void)
       if(update_step==1 && run_t.gTimer_run_power_on >0){
 
          update_step++;
-          MqttData_Publis_SetTemp(40);
          run_t.gTimer_senddata_panel=0;
          run_t.gTimer_ptc_adc_times =0;
          run_t.gTimer_fan_adc_times=0;
@@ -886,26 +881,16 @@ void RunCommand_Connect_Handler(void)
                     break;
 
                     case 3:
-                       if(run_t.gTimer_run_power_on > 0){
-                         MqttData_Publis_SetTemp(40);
-                         run_t.gTimer_run_power_on=0;
-                         run_t.run_power_on_step=4;
+                      if(run_t.gTimer_run_power_on > 0){
+                            
+                          run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                          run_t.RunCommand_Label = POWER_ON;
+                          run_t.run_power_on_step =0xfe;
+
                         }
                          
 
 
-                    break;
-
-                    case 4:
-                         if(run_t.gTimer_run_power_on > 0){
-                            
-                          run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
-                          run_t.RunCommand_Label = POWER_ON;
-                           run_t.run_power_on_step =0xfe;
-
-                        }
-
-                    
                     break;
 
 

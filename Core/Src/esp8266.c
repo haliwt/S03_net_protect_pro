@@ -174,7 +174,7 @@ void Wifi_SoftAP_Config_Handler(void)
 		 run_t.gTimer_login_times=0;
 
        }      
-		if(run_t.gTimer_login_times > 3){
+	   if(run_t.gTimer_login_times > 3 &&  esp8266_t.login_steps_tag==4){
             run_t.gTimer_login_times=0;
             run_t.wifi_config_net_lable=wifi_set_tcsap;
 
@@ -185,40 +185,29 @@ void Wifi_SoftAP_Config_Handler(void)
 
 	 case wifi_set_tcsap://5
 
-           if(esp8266_t.login_steps_tag ==4){
-              esp8266_t.login_steps_tag++;
-             run_t.gTimer_login_two_times=0;
+       
 
-            }
-
-           if(run_t.gTimer_login_times < 2 && esp8266_t.login_steps_tag ==5){
-               run_t.gTimer_login_two_times=0;
-	 
-          
-           }
-           else{
-
-             if(esp8266_t.login_steps_tag ==5){
-                esp8266_t.login_steps_tag++;
-                run_t.gTimer_login_two_times=0;
-	            sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",run_t.randomName[0]);
+           if(run_t.gTimer_login_times > 1 && esp8266_t.login_steps_tag ==4){
+               
+	             esp8266_t.login_steps_tag++;
+                 sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",run_t.randomName[0]);
                 usart2_flag = at_send_data(device_massage, strlen((const char *)device_massage));
-                run_t.gTimer_login_two_times=0;
+                run_t.gTimer_login_times=0;
+               
 
              }
              
-             if(run_t.gTimer_login_two_times > 2){
-                run_t.gTimer_login_two_times=0;
-                run_t.gTimer_login_times=0;
-                esp8266_t.login_steps_tag++;
-
+            
+            if(run_t.gTimer_login_times > 3 && esp8266_t.login_steps_tag ==5){
+                 esp8266_t.login_steps_tag++;
+                 run_t.gTimer_login_times=0;
 			 wifi_t.soft_ap_config_flag =1;
 			 esp8266_t.linking_tencent_cloud_doing =1; //enable usart2 receive wifi  data
 			 UART2_DATA.UART_Cnt=0;
 			 run_t.wifi_config_net_lable=0xff;
               }
 
-           }
+           
 			
 	 break;
 

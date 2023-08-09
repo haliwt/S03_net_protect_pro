@@ -178,7 +178,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  run_t.gTimer_linking_tencen_counter++;
 	  run_t.gFan_counter++;
       run_t.gTimer_login_times++;
-      run_t.gTimer_login_two_times++;
+ 
       run_t.gTimer_run_power_on ++;
 	  }
  	}

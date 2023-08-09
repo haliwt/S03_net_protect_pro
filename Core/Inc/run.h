@@ -178,7 +178,7 @@ typedef struct _RUN_T{
 	  
 	  
      uint8_t gTimer_login_times;
-     uint8_t gTimer_login_two_times;
+
 
 	uint8_t gTimer_senddata_panel;
 	
