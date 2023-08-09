@@ -426,6 +426,7 @@ void RunCommand_MainBoard_Fun(void)
 	    run_t.gFan_counter=0;
 
        }
+      
 		update_step=0;
 	  
 	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
@@ -515,6 +516,8 @@ void RunCommand_MainBoard_Fun(void)
 
    case UPDATE_TO_PANEL_DATA: //5
 
+     
+
       if(update_step ==0){
 	  	update_step++;
     	Subscriber_Data_FromCloud_Handler();
@@ -530,6 +533,8 @@ void RunCommand_MainBoard_Fun(void)
          run_t.gTimer_send_dit=0;
          run_t.gTimer_run_power_on =0;
       }
+
+      
 		
 
 
@@ -779,10 +784,10 @@ void RunCommand_Connect_Handler(void)
      switch(run_t.rx_command_tag){
 
         case POWER_ON:
-		 //  PTC_SetHigh();
-          run_t.gPower_flag = POWER_ON;
+
+         run_t.gPower_flag = POWER_ON;
 		 run_t.gPower_On = POWER_ON;
-         run_t.RunCommand_Label= POWER_ON;
+        
 		 run_t.gModel =1;
 		 run_t.set_wind_speed_value=100;
          run_t.wifi_run_set_restart_flag =0;
@@ -799,13 +804,12 @@ void RunCommand_Connect_Handler(void)
 		
 		 if( run_t.decodeFlag ==0){
 		 Update_DHT11_Value();
-		 HAL_Delay(10);
 		 if(esp8266_t.esp8266_login_cloud_success==1){
 		 	 run_t.gUlransonic =1;
 			 run_t.gPlasma =1;
 		     run_t.gDry =1;
 			 run_t.set_wind_speed_value=100;
-             run_t.wifi_gPower_On=1;
+     
 	        run_t.ptc_remove_warning_send_data =0;
 
             
@@ -814,78 +818,100 @@ void RunCommand_Connect_Handler(void)
 			    MqttData_Publish_SetOpen(1);  
 				run_t.gTimer_run_power_on=0;
               }
+
+             switch(run_t.app_timer_power_on_flag){
+
+
+
+             case 0:
+                    switch(run_t.run_power_on_step){
+
+                    case 1:
+                        if(run_t.gTimer_run_power_on>0){
+                        MqttData_Publish_Init();
+                       
+                        run_t.run_power_on_step =2;
+                        run_t.gTimer_run_power_on=0;
+                        }
+                    break;
+
+
+                    case 2:
+                       if( run_t.gTimer_run_power_on >0){
+                        run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                        run_t.RunCommand_Label = POWER_ON;
+                    
+                        run_t.run_power_on_step =0xff;
+
+                       }
+
+                    break;
              
-             if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0 && run_t.app_timer_power_on_flag==0){
-                  run_t.run_power_on_step++;
-			       MqttData_Publish_Init();
-                  run_t.gTimer_run_power_on=0;
-             }
-             else if(run_t.run_power_on_step ==1 && run_t.gTimer_run_power_on > 0){
-                 run_t.run_power_on_step++;
-                do{
-                   Tencen_Cloud_Timer_Power_On();
-                   
-
-                }while(run_t.run_power_on_step==2);
-                run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
-                
-                  if(run_t.gDry==1){
-        
-                      SendWifiCmd_To_Order(WIFI_PTC_ON);
-                      HAL_Delay(1);
-                  }
-                  else{
-                          run_t.gDry=0;
-                          SendWifiCmd_To_Order(WIFI_PTC_OFF);
-                          HAL_Delay(1);
-        
-                  }
-                
-                run_t.gTimer_run_power_on=0;
-               
-
-
-             }
-
-             
-            if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>0 && run_t.app_timer_power_on_flag==0 ){
-
-                   
-                  run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                    }
                   
-            }
-            else if(run_t.run_power_on_step==3 && run_t.gTimer_run_power_on>0){
-                 run_t.run_power_on_step++;
+                break;
 
-                 run_t.set_wind_speed_value=100;
+                case 1: //tencent cloud Timer power on 
+                   switch(run_t.run_power_on_step){
 
-                 MqttData_Publis_SetFan(run_t.set_wind_speed_value);
-                 run_t.run_power_on_step =0;
-  
-                 
+                     case 1:
+                           if(run_t.gTimer_run_power_on >0){
+                           Tencen_Cloud_Timer_Power_On();
+                           run_t.run_power_on_step=2;
+                           run_t.gTimer_run_power_on =0;
+                            }
+
+                    break;
+
+                    case 2:
+                        if(run_t.gTimer_run_power_on > 0){
+
+                           run_t.set_wind_speed_value=100;
+         
+                           MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+
+                           run_t.run_power_on_step=3;
+                           run_t.gTimer_run_power_on =0;
+
+
+                        }
+
+
+                    break;
+
+                    case 3:
+                       if(run_t.gTimer_run_power_on > 0){
+                         MqttData_Publis_SetTemp(40);
+                         run_t.gTimer_run_power_on=0;
+                         run_t.run_power_on_step=4;
+                        }
+                         
+
+
+                    break;
+
+                    case 4:
+                         if(run_t.gTimer_run_power_on > 0){
+                            
+                          run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+                          run_t.RunCommand_Label = POWER_ON;
+                           run_t.run_power_on_step =0xff;
+
+                        }
+
+                    
+                    break;
+
+
+
+                   }
+                     
+                
+
+                break;
              }
-
-
-            if(run_t.run_power_on_step==4 && run_t.gTimer_run_power_on>0){
-
-                 run_t.run_power_on_step++;
-
-                 MqttData_Publis_SetTemp(40);
-                 run_t.gTimer_run_power_on=0;
-             }
-
-
-           if(run_t.run_power_on_step==5 && run_t.gTimer_run_power_on>0){
-
-                 run_t.run_power_on_step++;
-               
-                 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
-
-             }
-            
-	       
 	      
-		 }
+          }
          else{
             run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
          }
@@ -926,6 +952,61 @@ void RunCommand_Connect_Handler(void)
 }
 
 
+void Tencent_Cloud_Timer_Power_On(void)
+{
+
+    if(run_t.app_timer_power_on_flag==1){
+
+       if(run_t.gDry==1){
+        SendWifiCmd_To_Order(WIFI_PTC_ON);
+       // HAL_Delay(1);
+      }
+      else{
+        run_t.gDry=0;
+        SendWifiCmd_To_Order(WIFI_PTC_OFF);
+       // HAL_Delay(1);
+
+      }
+
+            if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>0){
+                 run_t.run_power_on_step++;
+
+                 run_t.set_wind_speed_value=100;
+
+                 MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+                 run_t.run_power_on_step =0;
+  
+                 
+             }
+
+
+            if(run_t.run_power_on_step==3 && run_t.gTimer_run_power_on>0){
+
+                 run_t.run_power_on_step++;
+
+                 MqttData_Publis_SetTemp(40);
+                 run_t.gTimer_run_power_on=0;
+             }
+
+
+           if(run_t.run_power_on_step==4 && run_t.gTimer_run_power_on>0){
+
+                 run_t.run_power_on_step++;
+               
+                run_t.app_timer_power_on_flag=0;
+
+             }
+            
+
+
+
+
+
+    }
+    
+
+
+}
 
 
     

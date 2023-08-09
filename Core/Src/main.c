@@ -134,8 +134,11 @@ int main(void)
     if( run_t.decodeFlag ==0){
 	
     	RunCommand_Connect_Handler();
+    //    Tencent_Cloud_Timer_Power_On();
+        
     	
         RunWifi_Command_Handler();
+    
         if(wifi_t.get_rx_beijing_time_enable==0){
     	     Tencent_Cloud_Rx_Handler();
     		 Json_Parse_Command_Fun();

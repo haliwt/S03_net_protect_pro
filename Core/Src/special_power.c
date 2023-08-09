@@ -25,7 +25,6 @@ void SetPowerOn_ForDoing(void)
     run_t.gFan_continueRun =0;
     run_t.gPower_On=POWER_ON;
 	run_t.gmt_time_flag=0;
-	run_t.wifi_gPower_On = 1;
 
 
 	if(run_t.app_timer_power_on_flag==0){
@@ -56,24 +55,24 @@ void Tencen_Cloud_Timer_Power_On(void)
                   run_t.gPlasma=1;
     
                   SendWifiCmd_To_Order(WIFI_KILL_ON);
-                  HAL_Delay(1);
+                 // HAL_Delay(1);
               }
               else{
                   run_t.gPlasma =0;
                   SendWifiCmd_To_Order(WIFI_KILL_OFF);
-                  HAL_Delay(1);
+                 /// HAL_Delay(1);
               }
     
     
               if(run_t.gUlransonic==1){
     
                       SendWifiCmd_To_Order(WIFI_SONIC_ON);
-                      HAL_Delay(1);
+                     // HAL_Delay(1);
               }
               else {
                       run_t.gUlransonic=0;
                       SendWifiCmd_To_Order(WIFI_SONIC_OFF);
-                      HAL_Delay(1);
+                    //  HAL_Delay(1);
               }
     
     
@@ -81,20 +80,20 @@ void Tencen_Cloud_Timer_Power_On(void)
               if(run_t.gDry==1){
     
                   SendWifiCmd_To_Order(WIFI_PTC_ON);
-                  HAL_Delay(1);
+                 /// HAL_Delay(1);
               }
               else{
                       run_t.gDry=0;
                       SendWifiCmd_To_Order(WIFI_PTC_OFF);
-                      HAL_Delay(1);
+                     // HAL_Delay(1);
     
               }
            
         
              
                run_t.set_wind_speed_value =100;
-               run_t.wifi_gPower_On=1;
-               run_t.run_power_on_step++;
+           
+              
 
 }
 
@@ -104,7 +103,7 @@ void SetPowerOff_ForDoing(void)
 	run_t.gPower_flag = 0; //bool 
 	run_t.gFan_continueRun =1; //the fan still run 60s
 	run_t.gPower_On = POWER_OFF;
-	run_t.wifi_gPower_On = 0;
+
     run_t.set_wind_speed_value =10;
  
     run_t.gFan = 0;

@@ -70,7 +70,6 @@ typedef enum{
 typedef struct _RUN_T{
     
 	uint8_t gPower_On;
-	uint8_t wifi_gPower_On;
 	uint8_t gPower_flag;
 
 	uint8_t gDht11_flag;
@@ -221,6 +220,7 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void);
 
 void RunCommand_Connect_Handler(void);
 
+void Tencent_Cloud_Timer_Power_On(void);
 
 #endif 
 
