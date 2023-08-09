@@ -453,7 +453,7 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.gTimer_ptc_adc_times=0;
 		 run_t.gTimer_fan_adc_times=0;
 		 run_t.ptc_first_detected_times=0;
-		
+		 update_step=0;
 	
         if(power_off_step ==0){
            power_off_step++; 
@@ -827,11 +827,30 @@ void RunCommand_Connect_Handler(void)
 
 
              }
-             
-             if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 ){
 
-                   run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+             
+            if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 && run_t.app_timer_power_on_flag==0 ){
+
+                    MqttData_Publis_SetFan(run_t.set_wind_speed_value);
+                    run_t.run_power_on_step++;
+                   run_t.gTimer_run_power_on=0;
+            }
+            else if(run_t.run_power_on_step==2 && run_t.gTimer_run_power_on>1 ){
+
+
+
+                 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
              }
+
+
+            if(run_t.run_power_on_step==3 && run_t.gTimer_run_power_on>1){
+
+
+                 MqttData_Publis_SetTemp(40);
+                 run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+
+
+            }
 	       
 	      
 		 }

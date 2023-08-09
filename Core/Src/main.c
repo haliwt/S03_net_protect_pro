@@ -140,9 +140,10 @@ int main(void)
     	     Tencent_Cloud_Rx_Handler();
     		 Json_Parse_Command_Fun();
     	}
-        USART1_Cmd_Error_Handler(&huart1);
-        USART2_Cmd_Error_Handler(&huart2);
+       
    }
+   USART1_Cmd_Error_Handler(&huart1);
+   USART2_Cmd_Error_Handler(&huart2);
    
 	
 

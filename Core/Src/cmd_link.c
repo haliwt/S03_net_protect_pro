@@ -68,7 +68,7 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
    if(huart==&huart1){
 
 
-      if(run_t.gTimer_usart_error >27){
+      if(run_t.gTimer_usart_error >5){
 	  	run_t.gTimer_usart_error=0;
 	     __HAL_UART_CLEAR_OREFLAG(&huart1);
 		 temp = USART1->RDR;
