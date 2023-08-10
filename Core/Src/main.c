@@ -118,7 +118,7 @@ int main(void)
     __HAL_UART_ENABLE_IT(&huart1,UART_IT_ERR);
     __HAL_UART_ENABLE_IT(&huart2,UART_IT_ERR);
 	run_t.power_off_fan_state=1;
-    run_t.rx_command_tag= POWER_OFF;
+  //  run_t.rx_command_tag= POWER_OFF;
   
 
   /* USER CODE BEGIN WHILE */

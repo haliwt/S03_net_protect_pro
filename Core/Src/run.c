@@ -456,15 +456,22 @@ void RunCommand_MainBoard_Fun(void)
 		 run_t.gTimer_fan_adc_times=0;
 		 run_t.ptc_first_detected_times=0;
 		 update_step=0;
+
+        if(power_off_step == 0){
+            power_off_step++;
+			MqttData_Publish_SetOpen(0); 
+			
+	        run_t.gTimer_run_power_on=0;
+         }
 	
-        if(power_off_step ==0){
+        if(power_off_step ==1 && run_t.gTimer_run_power_on>0){
            power_off_step++; 
-            MqttData_Publish_PowerOff_Ref(); 
+           MqttData_Publish_PowerOff_Ref(); 
            run_t.gTimer_run_power_on =0;
 
         }
 
-        if(run_t.gTimer_run_power_on >1 && power_off_step ==1 && run_t.ptc_remove_warning_send_data ==0){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==2 && run_t.ptc_remove_warning_send_data ==0){
            power_off_step ++;
 
            Publish_Data_Warning(ptc_temp_warning,0);
@@ -473,7 +480,7 @@ void RunCommand_MainBoard_Fun(void)
 	     //HAL_Delay(200);
         }
 
-        if(run_t.gTimer_run_power_on >0 && power_off_step ==2 && run_t.ptc_remove_warning_send_data ==0){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==3 && run_t.ptc_remove_warning_send_data ==0){
              power_off_step ++;
         
              Publish_Data_Warning(fan_warning,0);
@@ -482,7 +489,7 @@ void RunCommand_MainBoard_Fun(void)
                  //HAL_Delay(200);
         }
 
-        if(run_t.gTimer_run_power_on >0 && power_off_step ==3){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==4){
            power_off_step++;
 
            Subscriber_Data_FromCloud_Handler();
@@ -490,7 +497,7 @@ void RunCommand_MainBoard_Fun(void)
 
         }
 
-        if(run_t.gTimer_run_power_on >0 && power_off_step ==4){
+        if(run_t.gTimer_run_power_on >0 && power_off_step ==5){
 
        
        
@@ -731,69 +738,68 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 	if(self_power_on_flag==0){
       
 	    if(power_on_first ==0){
-           power_on_first++; 
+           
            Buzzer_KeySound();
+           power_on_first++; 
+           run_t.gTimer_login_times=0;
         }
-        if(power_on_first==1){
-            power_on_first++;
+        if(power_on_first==1 ){
+           
 		   InitWifiModule_Hardware();//InitWifiModule();
 		   run_t.gTimer_run_power_on =0;
            run_t.gTimer_login_times=0;
+            power_on_first++;
         }
 		//HAL_Delay(1000);
 		if( run_t.gTimer_run_power_on >0 &&  power_on_first==2 ){
-            power_on_first++;
+           
             SmartPhone_TryToLink_TencentCloud();
               run_t.gTimer_ptc_adc_times=0;
              run_t.gTimer_run_power_on =0;
+              power_on_first++;
 
        }
 
        
-		if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gTimer_run_power_on> 2 && power_on_first==3 ){
+		if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gTimer_run_power_on> 3 && power_on_first==3 ){
 			
-			power_on_first++;
+			
 			wifi_t.runCommand_order_lable= wifi_tencent_subscription_data;//04
 	
-
+            MqttData_Publish_SetOpen(0); 
 			SendWifiData_To_Cmd(0x01) ;
-            HAL_Delay(2);
+           // HAL_Delay(2);
 			self_power_on_flag ++ ;
+             power_on_first++;
 
 			
 		}
-        else if(run_t.gTimer_run_power_on> 3 && power_on_first==3){
-            power_on_first++;
-             self_power_on_flag ++ ;
-
-
-        }
+//        else if(run_t.gTimer_run_power_on> 3 && power_on_first==3){
+//            power_on_first++;
+//            self_power_on_flag ++ ;
+//
+//
+//        }
        run_t.gTimer_ptc_adc_times=0;
       
     }
     
-	 if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gPower_On  !=POWER_ON && power_on_first==4){
+	 if(esp8266_t.esp8266_login_cloud_success==1 && power_on_first==4){
        
             power_on_first++;
            if(send_power_off_flag==0){
             send_power_off_flag++;
-		    run_t.rx_command_tag= POWER_OFF;
+		 
+            run_t.rx_command_tag= POWER_OFF;
+          
 			SendWifiData_To_Cmd(0x01) ;
-			HAL_Delay(2);
+			//HAL_Delay(2);
+			MqttData_Publish_SetOpen(0); 
                
            }
    			
 	}
-    else{
-         if(send_power_off_flag==0){
-            send_power_off_flag++;
-		    run_t.rx_command_tag= POWER_OFF;
-			SendWifiData_To_Cmd(0x01) ;
-			HAL_Delay(2);
-               
-           }
-    
-    }
+  
     
    
 }
@@ -949,13 +955,14 @@ void RunCommand_Connect_Handler(void)
           run_t.ptc_remove_warning_send_data =0;
 	      run_t.gPower_On=POWER_OFF;
         run_t.gPower_flag = POWER_OFF;
-        run_t.RunCommand_Label = POWER_OFF;
+       
 		 run_t.set_wind_speed_value=10;
 		 run_t.gModel =1;
           esp8266_t.login_steps_tag=0;
           run_t.run_power_on_step=0;
 	
          run_t.rx_command_tag= RUN_COMMAND;
+         run_t.RunCommand_Label = POWER_OFF;
 	   break;
 
 	   case RUN_COMMAND:
