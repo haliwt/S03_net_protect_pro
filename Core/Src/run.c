@@ -65,7 +65,7 @@ void Decode_RunCmd(void)
 			  run_t.gTimer_linking_tencen_counter=0;
               run_t.wifi_run_set_restart_flag =1;
            
-	          wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
+	          wifi_t.wifi_runCommand_order_lable= wifi_link_tencent_cloud;//2 
 	          
              run_t.decodeFlag =0;
           }
@@ -773,7 +773,7 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 		if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gTimer_run_power_on> 3 && power_on_first==3 ){
 			
 		
-			wifi_t.runCommand_order_lable= wifi_tencent_subscription_data;//04
+			wifi_t.wifi_runCommand_order_lable= wifi_tencent_subscription_data;//04
 	
             MqttData_Publish_SetOpen(0); 
            
@@ -962,6 +962,7 @@ void RunCommand_Connect_Handler(void)
 			 run_t.gPlasma =1;
 		     run_t.gDry =1;
             run_t.rx_command_tag=RUN_COMMAND ;//KEY_NULL;
+            run_t.RunCommand_Label = POWER_ON;
          }
          
 		
