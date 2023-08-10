@@ -502,7 +502,7 @@ void RunCommand_MainBoard_Fun(void)
        
        
         run_t.gFan_counter=0;
-	    run_t.RunCommand_Label = FAN_CONTINUCE_RUN_ONE_MINUTE;
+	    run_t.RunCommand_Label = FAN_POWER_OFF_RUN_ONE_MINUTE;
 
 	
        }
@@ -664,9 +664,18 @@ void RunCommand_MainBoard_Fun(void)
      
     break;
 
-	case FAN_CONTINUCE_RUN_ONE_MINUTE: //7
+	case FAN_POWER_OFF_RUN_ONE_MINUTE: //7
 
-	 if(run_t.power_off_fan_state==1){
+     if(power_off_step ==5){
+         power_off_step++; 
+         MqttData_Publish_PowerOff_Ref(); 
+         run_t.gTimer_run_power_on =0;
+
+     }
+
+
+
+     if(run_t.power_off_fan_state==1){
 		 run_t.power_off_fan_state++;
 	     run_t.RunCommand_Label = POWER_NULL;
 
@@ -694,7 +703,7 @@ void RunCommand_MainBoard_Fun(void)
 	}
 	break;
 
-	case POWER_ON_FAN_CONTINUCE_RUN_ONE_MINUTE:
+	case POWER_ON_FAN_RUN_ONE_MINUTE: //8
   
 	    
 	 if(run_t.gPower_On ==POWER_ON && run_t.gFan_continueRun ==1){

@@ -94,6 +94,7 @@ static void Mqtt_Value_update_data(void)
 static void Mqtt_power_off_Value(void)
 {
     run_t.set_wind_speed_value=10;
+    run_t.set_temperature_value=20;
    	sg_info.open=0;
     sg_info.state=1;
     sg_info.ptc=0; 
