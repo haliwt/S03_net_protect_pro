@@ -732,7 +732,7 @@ void RunCommand_MainBoard_Fun(void)
 **********************************************************************/
 void MainBoard_Self_Inspection_PowerOn_Fun(void)
 {
-    static uint8_t self_power_on_flag=0,send_power_off_flag=0,power_on_first;
+    static uint8_t self_power_on_flag,power_on_first;
     
 
 	if(self_power_on_flag==0){
@@ -763,32 +763,43 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
        
 		if(esp8266_t.esp8266_login_cloud_success==1 && run_t.gTimer_run_power_on> 3 && power_on_first==3 ){
 			
-			
+		
 			wifi_t.runCommand_order_lable= wifi_tencent_subscription_data;//04
 	
             MqttData_Publish_SetOpen(0); 
-			SendWifiData_To_Cmd(0x01) ;
+           
+			
            // HAL_Delay(2);
-			self_power_on_flag ++ ;
-             power_on_first++;
+		
+            power_on_first++;
+            run_t.gTimer_run_power_on=0;
 
 			
 		}
-//        else if(run_t.gTimer_run_power_on> 3 && power_on_first==3){
-//            power_on_first++;
-//            self_power_on_flag ++ ;
-//
-//
-//        }
+
+        if(run_t.gTimer_run_power_on>0 &&  power_on_first==4 ){
+
+                   SendWifiData_To_Cmd(0x01) ;
+
+                   self_power_on_flag ++ ;
+                   power_on_first++;
+                   run_t.gTimer_run_power_on=0;
+
+
+
+
+        }
+
+        
+
        run_t.gTimer_ptc_adc_times=0;
       
     }
     
-	 if(esp8266_t.esp8266_login_cloud_success==1 && power_on_first==4){
+	 if(esp8266_t.esp8266_login_cloud_success==1 && power_on_first==5 && run_t.gTimer_run_power_on>0 ){
        
             power_on_first++;
-           if(send_power_off_flag==0){
-            send_power_off_flag++;
+    
 		 
             run_t.rx_command_tag= POWER_OFF;
           
@@ -796,7 +807,7 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 			//HAL_Delay(2);
 			MqttData_Publish_SetOpen(0); 
                
-           }
+           
    			
 	}
   
