@@ -784,6 +784,16 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
            }
    			
 	}
+    else{
+         if(send_power_off_flag==0){
+            send_power_off_flag++;
+		    run_t.rx_command_tag= POWER_OFF;
+			SendWifiData_To_Cmd(0x01) ;
+			HAL_Delay(2);
+               
+           }
+    
+    }
     
    
 }
