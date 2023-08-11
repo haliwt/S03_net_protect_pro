@@ -30,7 +30,7 @@ typedef enum{
    POWER_CONNECTOR_WIFI,
    UPDATE_TO_PANEL_DATA,
    WIFI_RESTART_INIT,
-   FAN_POWER_OFF_RUN_ONE_MINUTE,
+   POWER_OFF_FAN_RUN_ONE_MINUTE,
    POWER_ON_FAN_RUN_ONE_MINUTE,
   
    POWER_NULL, //9
@@ -88,7 +88,7 @@ typedef struct _RUN_T{
     //iwdg ref
 	uint8_t process_run_guarantee_flag;
 	uint8_t usart2_error_falg ;
-	uint8_t power_off_fan_state ;
+
     uint8_t wifi_run_set_restart_flag ;
     //process run on 
     uint8_t run_power_on_step;
@@ -121,7 +121,7 @@ typedef struct _RUN_T{
 
 	//fan:
 	uint8_t gFan_pwm_duty_level;
-	uint8_t gFan_continueRun;
+
 	uint8_t gFan_counter;
 	uint8_t  gFan;
     //ptc:

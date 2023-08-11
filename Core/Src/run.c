@@ -170,19 +170,19 @@ void Decode_RunCmd(void)
 static void Single_Power_ReceiveCmd(uint8_t cmd)
 {
     static uint8_t buzzer_power_on_sound,buzzer_power_Off_sound;
-
+    static uint16_t first_power_off_flag;
     
     switch(cmd){
 
     case 0x01: // power on
                 receive_form_display_power_flag++;
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+                SendWifiData_To_Cmd(0x54); // power on return confirm flag
               
                 buzzer_power_Off_sound=0;
 
                
-                if(receive_form_display_power_flag !=buzzer_power_on_sound){ 
-                   
+                if(receive_form_display_power_flag !=buzzer_power_on_sound && first_power_off_flag !=1 ){ 
+                   first_power_off_flag++;
                    buzzer_power_on_sound = receive_form_display_power_flag ;
                    Buzzer_KeySound();
                         
@@ -216,6 +216,8 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
 
     case 0x00: //power off
         receive_form_display_power_off_flag++;
+      
+        if(first_power_off_flag==1)first_power_off_flag++;
         SendWifiData_To_Cmd(0x53); //0x52= 'R'
          buzzer_power_on_sound=0;
         if(receive_form_display_power_off_flag !=buzzer_power_Off_sound){
@@ -269,7 +271,6 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 
        case DRY_ON:
          run_t.gDry = 1;
-	      run_t.gFan_continueRun =0;
 	   if(run_t.noBuzzer_sound_dry_flag !=1){
 		     Buzzer_KeySound();
 		 }
@@ -289,7 +290,7 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 			    Buzzer_KeySound();
 			 if(run_t.gPlasma ==0){ //plasma turn off flag
 			  run_t.gFan_counter =0;
-			   run_t.gFan_continueRun =1;
+			   
 
 		     }
 			if(esp8266_t.esp8266_login_cloud_success==1)
@@ -389,7 +390,8 @@ void SystemReset(void)
 void RunCommand_MainBoard_Fun(void)
 {
    uint8_t i;
-   static uint8_t fan_continuce,update_step;
+   static uint8_t fan_continuce,update_step,fan_run_flag;
+   static uint8_t interval_times_fan_one_minute_flag;
     
     if(run_t.buzzer_sound_flag == 1){
 	 	run_t.buzzer_sound_flag = 0;
@@ -501,8 +503,8 @@ void RunCommand_MainBoard_Fun(void)
 
        
        
-        run_t.gFan_counter=0;
-	    run_t.RunCommand_Label = FAN_POWER_OFF_RUN_ONE_MINUTE;
+                run_t.gFan_counter=0;
+	            run_t.RunCommand_Label = POWER_OFF_FAN_RUN_ONE_MINUTE;
 
 	
        }
@@ -622,7 +624,7 @@ void RunCommand_MainBoard_Fun(void)
         
              run_t.gTimer_continuce_works_time =0;
              run_t.interval_time_stop_run =1;
-             run_t.gFan_continueRun =1;
+             interval_times_fan_one_minute_flag=1;
              run_t.gFan_counter=0;
         }
      
@@ -640,7 +642,7 @@ void RunCommand_MainBoard_Fun(void)
 		    run_t.interval_time_stop_run =0;
       }
 
-	 if(run_t.gFan_continueRun ==1){
+	 if(interval_times_fan_one_minute_flag==1){
 
 	      if(run_t.gFan_counter < 60){
 	  
@@ -651,7 +653,7 @@ void RunCommand_MainBoard_Fun(void)
 	           
 			   run_t.gFan_counter=0;
 			
-			   run_t.gFan_continueRun=0;
+			   interval_times_fan_one_minute_flag=0;
 			   FAN_Stop();
 	       }
 
@@ -664,7 +666,7 @@ void RunCommand_MainBoard_Fun(void)
      
     break;
 
-	case FAN_POWER_OFF_RUN_ONE_MINUTE: //7
+	case POWER_OFF_FAN_RUN_ONE_MINUTE: //7
 
      if(power_off_step ==5){
          power_off_step++; 
@@ -673,10 +675,8 @@ void RunCommand_MainBoard_Fun(void)
 
      }
 
-
-
-     if(run_t.power_off_fan_state==1){
-		 run_t.power_off_fan_state++;
+     if(fan_run_flag==0){
+	    fan_run_flag++;
 	     run_t.RunCommand_Label = POWER_NULL;
 
 
@@ -684,14 +684,14 @@ void RunCommand_MainBoard_Fun(void)
 	else{
 
          if(run_t.gPower_On == POWER_OFF && run_t.app_timer_power_off_flag ==0){
-		  if(run_t.gFan_counter < 60){
+		  if(run_t.gFan_counter < 60 ){
           
                    // Fan_One_Speed();
 					Fan_One_Power_Off_Speed();
                   
            }       
            else{
-		           
+		        
 				  run_t.gFan_counter=0;
 				  run_t.RunCommand_Label = POWER_NULL;
 			      FAN_Stop();
@@ -703,28 +703,7 @@ void RunCommand_MainBoard_Fun(void)
 	}
 	break;
 
-	case POWER_ON_FAN_RUN_ONE_MINUTE: //8
-  
-	    
-	 if(run_t.gPower_On ==POWER_ON && run_t.gFan_continueRun ==1){
-
-              if(run_t.gFan_counter < 60){
-          
-                      Fan_One_Power_Off_Speed();//Fan_RunSpeed_Fun();// FAN_CCW_RUN();
-                  }       
-
-	           if(run_t.gFan_counter > 59){
-		           
-				   run_t.gFan_counter=0;
-				
-				   run_t.gFan_continueRun++;
-				   FAN_Stop();
-	           }
-
-	 }
-
-
-	break;
+	
 
 
 
@@ -788,14 +767,11 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 
         if(run_t.gTimer_run_power_on>0 &&  power_on_first==4 ){
 
-                   SendWifiData_To_Cmd(0x01) ;
+           SendWifiData_To_Cmd(0x01) ;
 
-                   self_power_on_flag ++ ;
-                   power_on_first++;
-                   run_t.gTimer_run_power_on=0;
-
-
-
+           self_power_on_flag ++ ;
+           power_on_first++;
+           run_t.gTimer_run_power_on=0;
 
         }
 
@@ -816,9 +792,7 @@ void MainBoard_Self_Inspection_PowerOn_Fun(void)
 			//HAL_Delay(2);
 			MqttData_Publish_SetOpen(0); 
                
-           
-   			
-	}
+     }
   
     
    

@@ -18,10 +18,10 @@ typedef enum _wifi_state_t{
 	wifi_tencent_publish_init_data, //3
 	wifi_tencent_subscription_data, //4
 	wifi_publish_update_tencent_cloud_data,//5
-	wifi_tencent_publish_dht11_data,
-	wifi_get_beijing_time,
-	wifi_disconnect,
-	wifi_null
+	wifi_tencent_publish_dht11_data,//6
+	wifi_get_beijing_time,//7
+	wifi_disconnect,//8
+	wifi_null//9
 
 
 }wifi_state_t;
