@@ -109,10 +109,12 @@ void Wifi_SoftAP_Config_Handler(void)
            //InitWifiModule();
            if(esp8266_t.login_steps_tag==0){
                 esp8266_t.login_steps_tag ++;
+               //ReConnect_Wifi_Net_ATReset_Hardware();//InitWifiModule_Hardware();
+                WIFI_IC_ENABLE();
+                InitWifiModule_Hardware();
                 run_t.gTimer_login_times=0;
-                ReConnect_Wifi_Net_ATReset_Hardware();//InitWifiModule_Hardware();
            }
-           if(run_t.gTimer_login_times > 1){
+           if(run_t.gTimer_login_times > 0 && esp8266_t.login_steps_tag==1){
             run_t.gTimer_login_times=0;
 		
            run_t.wifi_config_net_lable =wifi_set_cwmode;
@@ -131,7 +133,7 @@ void Wifi_SoftAP_Config_Handler(void)
             //HAL_UART_Transmit(&huart2, "AT+CIPMUX=1\r\n", strlen("AT+CIPMUX=1\r\n"), 5000);   
 
              }
-            if(run_t.gTimer_login_times > 2){
+            if(run_t.gTimer_login_times > 1 && esp8266_t.login_steps_tag==2){
                 run_t.gTimer_login_times=0;
 
               run_t.wifi_config_net_lable =wifi_set_softap;
@@ -156,7 +158,7 @@ void Wifi_SoftAP_Config_Handler(void)
              run_t.gTimer_login_times=0;
 
             }
-            if(run_t.gTimer_login_times > 3){
+            if(run_t.gTimer_login_times > 6 && esp8266_t.login_steps_tag==3){
                 run_t.gTimer_login_times=0;
 	        
 			run_t.wifi_config_net_lable=wifi_set_tcdevreg;
@@ -166,7 +168,7 @@ void Wifi_SoftAP_Config_Handler(void)
 
 
 	 case wifi_set_tcdevreg://4 dynamic register
-	  if(esp8266_t.login_steps_tag ==3){
+	  if(esp8266_t.login_steps_tag ==3 && run_t.gTimer_login_times > 2){
          esp8266_t.login_steps_tag++;
 		 HAL_UART_Transmit(&huart2, "AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"), 0xffff); //动态注册
 		 run_t.gTimer_login_times=0;
@@ -185,7 +187,7 @@ void Wifi_SoftAP_Config_Handler(void)
 
        
 
-           if(run_t.gTimer_login_times > 1 && esp8266_t.login_steps_tag ==4){
+           if(run_t.gTimer_login_times > 3 && esp8266_t.login_steps_tag ==4){
                
 	             esp8266_t.login_steps_tag++;
                  sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",run_t.randomName[0]);
@@ -196,7 +198,7 @@ void Wifi_SoftAP_Config_Handler(void)
              }
              
             
-            if(run_t.gTimer_login_times > 3 && esp8266_t.login_steps_tag ==5){
+            if(run_t.gTimer_login_times > 1 && esp8266_t.login_steps_tag ==5){
                  esp8266_t.login_steps_tag++;
                  run_t.gTimer_login_times=0;
 			 wifi_t.soft_ap_config_flag =1;
@@ -231,13 +233,13 @@ void SmartPhone_LinkTencent_Cloud(void)
 
 	if(esp8266_t.soft_ap_config_success==1){
 
-       esp8266_t.soft_ap_config_success=0;
 	   HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//开始连接
        if(run_t.gTimer_login_times > 2){
        run_t.gTimer_login_times=0;
      
        
        SendWifiData_To_Cmd(1);//To tell display panel wifi be connetor to tencent cloud is success
+        esp8266_t.soft_ap_config_success=0;
        }
 	 
      }

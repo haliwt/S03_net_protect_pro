@@ -67,6 +67,7 @@ typedef struct ESP8266_DATA
 	uint8_t send_tencent_cloud_data_lable;
     uint8_t subscrible_receive_data_label;
     uint8_t login_steps_tag;
+    uint8_t gTimer_login_time;
 	
 }ESP8266DATATypedef;
 
