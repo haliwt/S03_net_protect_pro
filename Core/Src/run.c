@@ -204,11 +204,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
                 run_t.rx_command_tag=POWER_ON;
                
     	     
-                
-
-            
-           
-      run_t.gTimer_send_dit=60;
+               run_t.gTimer_send_dit=60;
 	 
 	cmd=0xff;  
      break;
@@ -545,10 +541,6 @@ void RunCommand_MainBoard_Fun(void)
          run_t.gTimer_run_power_on =0;
       }
 
-      
-		
-
-
      switch(run_t.interval_time_stop_run){
 
 	 case 0: //works timing 
@@ -615,7 +607,11 @@ void RunCommand_MainBoard_Fun(void)
              }
             
              if(run_t.gTimer_run_power_on >0 && update_step==5){
+                 SendWifiCmd_To_Order(WIFI_PTC_ON);
+                 SendWifiCmd_To_Order(WIFI_KILL_ON);
+                 SendWifiCmd_To_Order(WIFI_SONIC_ON);
                           update_step ++;
+                          
                 run_t.first_link_tencent_cloud_flag++;
 
               }
