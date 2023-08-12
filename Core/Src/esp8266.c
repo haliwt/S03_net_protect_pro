@@ -235,11 +235,10 @@ void SmartPhone_LinkTencent_Cloud(void)
 
 	   HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//开始连接
        if(run_t.gTimer_login_times > 2){
-       run_t.gTimer_login_times=0;
-     
-       
-       SendWifiData_To_Cmd(1);//To tell display panel wifi be connetor to tencent cloud is success
+      
+        SendWifiData_To_Cmd(1);//To tell display panel wifi be connetor to tencent cloud is success
         esp8266_t.soft_ap_config_success=0;
+        run_t.gTimer_login_times=0;
        }
 	 
      }

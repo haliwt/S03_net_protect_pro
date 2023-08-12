@@ -64,6 +64,8 @@ void Decode_RunCmd(void)
 	          run_t.wifi_config_net_lable=wifi_set_restor;
 			  run_t.gTimer_linking_tencen_counter=0;
               run_t.wifi_run_set_restart_flag =1;
+              run_t.rx_command_tag=RUN_COMMAND ;// WT.EDIT 2023.08.12
+              run_t.RunCommand_Label = POWER_ON;
            
 	          wifi_t.wifi_runCommand_order_lable= wifi_link_tencent_cloud;//2 
 	          
