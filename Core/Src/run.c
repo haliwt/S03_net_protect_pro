@@ -607,10 +607,18 @@ void RunCommand_MainBoard_Fun(void)
              }
             
              if(run_t.gTimer_run_power_on >0 && update_step==5){
+                 
                  SendWifiCmd_To_Order(WIFI_PTC_ON);
                  SendWifiCmd_To_Order(WIFI_KILL_ON);
                  SendWifiCmd_To_Order(WIFI_SONIC_ON);
+                 if(run_t.wifi_the_first_login_tencent_cloud_success==1){
+                    run_t.wifi_the_first_login_tencent_cloud_success=0;
+                    run_t.set_temperature_value=40; 
+                   SendWifiData_To_WifiSetTemp(run_t.set_temperature_value);
+
+                 }
                           update_step ++;
+                 
                           
                 run_t.first_link_tencent_cloud_flag++;
 

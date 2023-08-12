@@ -92,6 +92,7 @@ typedef struct _RUN_T{
     uint8_t wifi_run_set_restart_flag ;
     //process run on 
     uint8_t run_power_on_step;
+    uint8_t wifi_the_first_login_tencent_cloud_success;
 	
  
 

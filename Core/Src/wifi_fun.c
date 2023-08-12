@@ -124,19 +124,16 @@ void RunWifi_Command_Handler(void)
 				wifi_t.get_rx_beijing_time_enable=0;
 			    wifi_t.wifi_runCommand_order_lable = wifi_tencent_publish_init_data;
                 run_t.wifi_run_set_restart_flag =0;
-                
+                run_t.wifi_the_first_login_tencent_cloud_success =1;
                 
 				
 			}
            else if(esp8266_t.esp8266_login_cloud_success==0 && esp8266_t.soft_ap_config_success >6){
            
-                // wifi_t.wifi_runCommand_order_lable = wifi_link_tencent_cloud;
+   
                 wifi_t.wifi_runCommand_order_lable = wifi_tencent_publish_init_data;
            }
-//           else{
-//              wifi_t.wifi_runCommand_order_lable = wifi_null;
-//              run_t.wifi_run_set_restart_flag =0;
-//              }
+
            
            }
 	    break;
