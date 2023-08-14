@@ -556,14 +556,15 @@ void RunCommand_MainBoard_Fun(void)
 	     
 
 	 }
-     else if(run_t.gTimer_fan_adc_times > 45){ //2 minute 180s
+     
+     if(run_t.gTimer_fan_adc_times > 45){ //2 minute 180s
 	     run_t.gTimer_fan_adc_times =0;
 	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,10);
 	     
 
 		 
 	 }
-	 else if(run_t.gTimer_send_dit > 49){
+	 if(run_t.gTimer_send_dit > 62){
 	
 			 run_t.gTimer_send_dit=0;
 			 Update_DHT11_Value();
@@ -973,13 +974,7 @@ void RunCommand_Connect_Handler(void)
 
 
 	   break;
-
-
-
-	 }
-
-
-
+     }
 }
 
 
