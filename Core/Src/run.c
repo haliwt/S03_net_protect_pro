@@ -579,7 +579,8 @@ void RunCommand_MainBoard_Fun(void)
 		}
 	
        if(run_t.first_link_tencent_cloud_flag ==1){
-
+        
+           run_t.RunCommand_Label = UPDATE_TO_PANEL_DATA;
            if(update_step==2){
               update_step++;
 

@@ -118,6 +118,9 @@ void RunWifi_Command_Handler(void)
 	        SmartPhone_LinkTencent_Cloud();
 	     
 	      if(esp8266_t.esp8266_login_cloud_success==1){
+
+                 MqttData_Publish_SetOpen(0x01);
+                 HAL_Delay(200);
 			
 				 SendWifiData_To_Cmd(0x01) ;	//WT.EDIT 2023.03.02
 				run_t.first_link_tencent_cloud_flag =1;
@@ -130,7 +133,8 @@ void RunWifi_Command_Handler(void)
 			}
            else if(esp8266_t.esp8266_login_cloud_success==0 && esp8266_t.soft_ap_config_success >6){
            
-   
+                 MqttData_Publish_SetOpen(0x01);
+                 HAL_Delay(200);
                 wifi_t.wifi_runCommand_order_lable = wifi_tencent_publish_init_data;
            }
 

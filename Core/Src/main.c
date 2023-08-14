@@ -9,9 +9,9 @@
   * Copyright (c) 2022 STMicroelectronics.
   * UYIJIA Version 4.2  DATA.2023.07.27
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * UYIJIA Version 4.3  DATA.2023-08-12 //optimize touch key sensitivity high
+  * .
+  * 
   *
   ******************************************************************************
   */
