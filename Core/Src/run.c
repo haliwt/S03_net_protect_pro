@@ -177,40 +177,34 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
     switch(cmd){
 
     case 0x01: // power on
-                receive_form_display_power_flag++;
-                SendWifiData_To_Cmd(0x54); // power on return confirm flag
-              
-                buzzer_power_Off_sound=0;
+        receive_form_display_power_flag++;
+        SendWifiData_To_Cmd(0x54); // power on return confirm flag
 
-               
-                if(receive_form_display_power_flag !=buzzer_power_on_sound && first_power_off_flag !=1 ){ 
-                   first_power_off_flag++;
-                   buzzer_power_on_sound = receive_form_display_power_flag ;
-                   Buzzer_KeySound();
-                        
-                   
-                    
-                }
-                SendWifiData_To_Cmd(0x54); //0x52= 'R'
+        buzzer_power_Off_sound=0;
 
-                
-                run_t.decodeFlag =0;
-               
-               
-    		 //   PTC_SetHigh();
-                Update_DHT11_Value(); 
-                run_t.run_power_on_step=0;
-             
-                run_t.rx_command_tag=POWER_ON;
-               
-    	     
-               run_t.gTimer_send_dit=60;
+
+        if(receive_form_display_power_flag !=buzzer_power_on_sound && first_power_off_flag !=1 ){ 
+            first_power_off_flag++;
+            buzzer_power_on_sound = receive_form_display_power_flag ;
+            Buzzer_KeySound();
+        }
+        SendWifiData_To_Cmd(0x54); //0x52= 'R',receive order from display power on command copy a command 
+
+
+        run_t.decodeFlag =0;
+
+
+        //   PTC_SetHigh();
+        Update_DHT11_Value(); 
+        run_t.run_power_on_step=0;
+
+        run_t.rx_command_tag=POWER_ON;
+
+
+        run_t.gTimer_send_dit=60;
 	 
 	cmd=0xff;  
      break;
-
-
-	
 
     case 0x00: //power off
         receive_form_display_power_off_flag++;
@@ -236,14 +230,8 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
         
         cmd = 0xff;
     break;
-         
 
-
-   
-
-    
-
-     default:
+    default:
 
      break;
 
@@ -544,7 +532,7 @@ void RunCommand_MainBoard_Fun(void)
      switch(run_t.interval_time_stop_run){
 
 	 case 0: //works timing 
-	  if(run_t.gTimer_senddata_panel >50 ){ //300ms
+	  if(run_t.gTimer_senddata_panel >50 ){ //50*10ms = 500ms
 	   	    run_t.gTimer_senddata_panel=0;
 	        ActionEvent_Handler();
 	    }
@@ -557,9 +545,9 @@ void RunCommand_MainBoard_Fun(void)
 
 	 }
      
-     if(run_t.gTimer_fan_adc_times > 45){ //2 minute 180s
+     if(run_t.gTimer_fan_adc_times > 50){ 
 	     run_t.gTimer_fan_adc_times =0;
-	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,10);
+	     Get_Fan_Adc_Fun(ADC_CHANNEL_0,5); //
 	     
 
 		 

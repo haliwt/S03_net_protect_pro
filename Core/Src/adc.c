@@ -333,25 +333,16 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 
   if(fan_detect_voltage < 350){ //500  now and then is bug false alarm rate  .
        detect_error_times++;
-	   if(detect_error_times >2){
+	   if(detect_error_times >1){
 	   	
 		 
 		   run_t.fan_warning = 1;
 		   
-		
-          MqttData_Publis_SetFan(0);
-	      HAL_Delay(350);
-
-
-
-
-	
 		   Publish_Data_Warning(fan_warning,warning);
 	       HAL_Delay(350);
 		 
 	    
-	       Buzzer_KeySound();
-	       HAL_Delay(100);
+	      
 		   Buzzer_KeySound();
 	       HAL_Delay(100);
 		   Buzzer_KeySound();
@@ -361,12 +352,14 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 		   Buzzer_KeySound();	
 		   HAL_Delay(100);
            SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
-            HAL_Delay(5);
+            HAL_Delay(1);
 
-	
-
-		   Publish_Data_Warning(fan_warning,warning);
+	       MqttData_Publis_SetFan(0);
 	       HAL_Delay(350);
+           SendWifiCmd_To_Order(FAN_ERROR); //0xE1,
+
+		 //   Publish_Data_Warning(fan_warning,warning);
+	     //  HAL_Delay(350);
 		}
 	          
 

@@ -151,7 +151,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		
 	   tm0 ++ ;
        run_t.gTimer_senddata_panel++;
-       esp8266_t.gTimer_login_time++;
+       
 	 if(tm0 > 99){//100ms *10 = 1000ms =1s
         tm0 =0;
 	
@@ -181,6 +181,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       run_t.gTimer_login_times++;
  
       run_t.gTimer_run_power_on ++;
+      esp8266_t.gTimer_login_time++;
       
 	  }
  	}
